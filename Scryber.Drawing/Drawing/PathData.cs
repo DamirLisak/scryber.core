@@ -536,8 +536,6 @@ namespace Scryber.Drawing
             Point start = previous == null ? Point.Empty : previous.GetLocation(null, AdornmentPlacements.End);
             Point end;
             double angle;
-
-            PathBezierCurveData[] myquads;
             
             if (placement == AdornmentPlacements.Start)
             {

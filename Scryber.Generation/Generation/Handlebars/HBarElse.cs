@@ -15,7 +15,6 @@ namespace Scryber.Generation.Handlebars
             var value = newMatch.Value.Trim();
             if (value.StartsWith("{{else"))
             {
-                var path = "";
                 value = value.Substring(6); //remove '{{else '
                 if (value.Length >= 2 && value.EndsWith("}}"))
                 {
@@ -42,8 +41,10 @@ namespace Scryber.Generation.Handlebars
                 }
             }
             else
-                ;//else does not have an end token
-            
+            {
+                //else does not have an end token
+            }
+
             return result;
         }
     }

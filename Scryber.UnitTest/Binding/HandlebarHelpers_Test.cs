@@ -856,8 +856,6 @@ namespace Scryber.Core.UnitTests.Binding
                         "Not Eligible to drive"
                     };
 
-                    int found = 0;
-                    int total = 5;
                     var collector = doc.TraceLog as CollectorTraceLog;
                     List<string> notToCheck = new List<string>();
                     
@@ -903,98 +901,6 @@ namespace Scryber.Core.UnitTests.Binding
         [TestMethod]
         public void CheckHelperMatching20()
         {
-            var style = @"body {
-            font-family: Helvetica, sans-serif;
-            margin: 20pt;
-            font-size: 12pt;
-        }
-        h1 {
-            color: #1e40af;
-        }
-        h2 {
-            font-size: 16pt;
-            margin-bottom: 5pt;
-}
-        .user-badge {
-            display: inline-block;
-            padding: 5pt 15pt;
-            border-radius: 15pt;
-            font-size: 10pt;
-            font-weight: bold;
-            margin-left: 10pt;
-        }
-        .badge-premium {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-        .badge-admin {
-            background-color: #dbeafe;
-            color: #1e40af;
-        }
-        .badge-standard {
-            background-color: #f3f4f6;
-            color: #4b5563;
-        }
-        .metric-box {
-            display: inline-block;
-            width: 30%;
-            padding: 10pt;
-            margin: 10pt 1%;
-            border: 2pt solid #2563eb;
-            border-radius: 5pt;
-            text-align: center;
-        }
-        .metric-value {
-            font-size: 24pt;
-            font-weight: bold;
-            color: #2563eb;
-        }
-        .alert {
-            padding: 5pt;
-            margin: 5pt 0;
-            border-radius: 5pt;
-        }
-        .alert-warning {
-            background-color: #fef3c7;
-            border-left: 4pt solid #f59e0b;
-        }
-        .alert-info {
-            background-color: #dbeafe;
-            border-left: 4pt solid #2563eb;
-        }
-        .alert > i {
-            display: inline-block;
-            vertical-align : bottom;
-            border: solid 1pt #f59e0b;
-            color: #f59e0b;
-            font-size: 10pt;
-            font-style: normal;
-            padding: 2pt 5pt;
-            border-radius : 8pt;
-            font-weight: 600;
-        }
-        .alert.alert-info > i {
-            padding: 2pt 7pt;
-            border-color: #2563eb;
-            color: #2563eb;
-        }
-        table {
-            width: 100%;
-            margin: 20pt 0;
-        }
-        th {
-            background-color: #2563eb;
-            color: white;
-            padding: 5pt;
-            text-align: left;
-            margin: 0pt
-        }
-        td {
-            padding: 4pt;
-            border: none;
-            border-bottom: 1pt solid #e5e7eb;
-            margin:0pt
-        }";
 
             var str = $@"
 <!DOCTYPE html>
@@ -1294,10 +1200,6 @@ namespace Scryber.Core.UnitTests.Binding
 </html>
 
 ";
-            
-            //Added 'this' support, and ../ support
-            //TODO: Add format function same as string(value, format)
-            //TODO: Add functions for add(), subtract(), divide(), multiply()
 
         using (var reader = new System.IO.StringReader(str))
             {

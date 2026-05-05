@@ -45,8 +45,8 @@ public class CatalogPdfTocItem {
 public class CatalogPdfAssemblySection {
     public string AnchorId { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
-    public string? PartNumber { get; set; }
-    public string? Balloon { get; set; }
+    public string PartNumber { get; set; }
+    public string Balloon { get; set; }
     public string ImageFilePath { get; set; } = string.Empty;
     public int Level { get; set; }
     public List<CatalogPdfPartRow> Parts { get; set; } = new();

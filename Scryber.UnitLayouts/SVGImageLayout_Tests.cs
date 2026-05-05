@@ -53,6 +53,7 @@ namespace Scryber.UnitLayouts
 
         private void Doc_LayoutComplete(object sender, LayoutEventArgs args)
         {
+            this.context = args.Context as PDFLayoutContext;
             this.layout = args.Context.GetLayout<PDFLayoutDocument>();
         }
         
@@ -1773,10 +1774,7 @@ namespace Scryber.UnitLayouts
             Assert.IsNotNull(this.layout);
             var svgs = GetSVGImageData(this.layout);
             Assert.AreEqual(1, svgs.Count, "Expected 4 SVG images");
-
-            // All use viewBox 0 0 200 150
-            const double Delta = 0.5;
-
+            
             
             // 1. width=50% → intrinsic width=100 (50% of vb 200), height=75 (proportional from vb AR)
             //    No img override → run matches intrinsic.

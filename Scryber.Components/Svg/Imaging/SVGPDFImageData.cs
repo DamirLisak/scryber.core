@@ -33,7 +33,11 @@ public class SVGPDFImageData : ImageVectorData, ILayoutComponent
         set => _elementName = value;
     }
 
-    public IDocument Document => _document;
+    public IDocument Document
+    {
+        get => _document;
+        set => _document = value;
+    }
 
     public IComponent Parent
     {

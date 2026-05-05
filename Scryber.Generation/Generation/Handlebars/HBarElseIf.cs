@@ -39,7 +39,10 @@ namespace Scryber.Generation.Handlebars
                 }
             }
             else
-                ;//else if does not have an end token
+            {
+                //else if does not have an end token
+            }
+
             return result;
         }
     }

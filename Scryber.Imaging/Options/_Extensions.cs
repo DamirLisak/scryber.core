@@ -54,9 +54,11 @@ namespace Scryber.Options
             new ImageFactoryPng(),
             new ImageFactoryTiff(),
             new ImageFactoryJpeg(),
+            new ImageFactoryWebP(),
             new ImageFactoryPngDataUrl(),
             new ImageFactoryJpegDataUrl(),
-            new ImageFactoryGifDataUrl()
+            new ImageFactoryGifDataUrl(),
+            new ImageFactoryWebPDataUrl(),
         };
         
         private static IEnumerable<ImageFactoryBase> GetStandardFactories()

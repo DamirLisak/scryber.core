@@ -30,9 +30,6 @@ namespace Scryber.Core.UnitTests.Binding
         [TestCategory("Binding")]
         public void LoopBinding_IndividualItems()
         {
-
-            var controllerType = "Scryber.Core.UnitTests.Mocks.MockControllerClass, Scryber.UnitTests";
-
             var src = @"
 <html xmlns='http://www.w3.org/1999/xhtml' >
     <head>
@@ -90,9 +87,6 @@ namespace Scryber.Core.UnitTests.Binding
         [TestCategory("Binding")]
         public void LoopBinding_NestedItems()
         {
-
-            var controllerType = "Scryber.Core.UnitTests.Mocks.MockControllerClass, Scryber.UnitTests";
-
             var src = @"
 <html xmlns='http://www.w3.org/1999/xhtml' >
     <head>
@@ -178,9 +172,7 @@ namespace Scryber.Core.UnitTests.Binding
         [TestCategory("Binding")]
         public void LoopBinding_NestedChoiceItems()
         {
-
-            var controllerType = "Scryber.Core.UnitTests.Mocks.MockControllerClass, Scryber.UnitTests";
-
+            
             var src = @"
 <html xmlns='http://www.w3.org/1999/xhtml' >
     <head>

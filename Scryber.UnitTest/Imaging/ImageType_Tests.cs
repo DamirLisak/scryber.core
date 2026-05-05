@@ -196,25 +196,25 @@ namespace Scryber.Core.UnitTests.Imaging
             doc.AppendTraceLog = true;
             doc.Params["Model"] = model;
 
-            Scryber.Components.Image? imageCodeImageData = doc.FindAComponentById("ImageCodeImageData") as Scryber.Components.Image;
+            Scryber.Components.Image imageCodeImageData = doc.FindAComponentById("ImageCodeImageData") as Scryber.Components.Image;
             if (imageCodeImageData != null)
             {
                 imageCodeImageData.Data = model.ImageData;
             }
 
-            Scryber.Components.Image? imageCodePDFImageDataBase = doc.FindAComponentById("ImageCodePDFImageDataBase") as Scryber.Components.Image;
+            Scryber.Components.Image imageCodePDFImageDataBase = doc.FindAComponentById("ImageCodePDFImageDataBase") as Scryber.Components.Image;
             if (imageCodePDFImageDataBase != null)
             {
                 imageCodePDFImageDataBase.Data = model.PDFImageDataBase;
             }
 
-            Scryber.Components.Image? imageCodeImageSourceRelativePath = doc.FindAComponentById("ImageCodeImageSourceRelativePath") as Scryber.Components.Image;
+            Scryber.Components.Image imageCodeImageSourceRelativePath = doc.FindAComponentById("ImageCodeImageSourceRelativePath") as Scryber.Components.Image;
             if (imageCodeImageSourceRelativePath != null)
             {
                 imageCodeImageSourceRelativePath.Source = model.ImageSourceRelativePath;
             }
 
-            Scryber.Components.Image? imageCodeImageSourceFullPath = doc.FindAComponentById("ImageCodeImageSourceFullPath") as Scryber.Components.Image;
+            Scryber.Components.Image imageCodeImageSourceFullPath = doc.FindAComponentById("ImageCodeImageSourceFullPath") as Scryber.Components.Image;
             if (imageCodeImageSourceFullPath != null)
             {
                 imageCodeImageSourceFullPath.Source = model.ImageSourceFullPath;

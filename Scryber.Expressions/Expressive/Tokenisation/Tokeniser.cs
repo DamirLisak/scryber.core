@@ -285,7 +285,7 @@ namespace Scryber.Expressive.Tokenisation
         protected virtual bool IsKeyword(string expression, int index, out int length)
         {
             int start = index;
-            bool hasAtIndexStart = false;
+            
             if (expression[start] == '@')
             {
                 //Explicit check for @index special notation.

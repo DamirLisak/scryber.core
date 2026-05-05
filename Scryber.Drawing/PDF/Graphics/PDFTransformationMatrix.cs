@@ -248,6 +248,11 @@ namespace Scryber.PDF.Graphics
                 return base.Equals(obj);
         }
 
+        public override int GetHashCode()
+        {
+            return this._matrix.GetHashCode();
+        }
+
         public override string ToString()
         {
             return "Matrix : " + this._matrix.ToString();

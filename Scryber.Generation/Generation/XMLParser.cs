@@ -998,7 +998,9 @@ namespace Scryber.Generation
         {
             LogAdd(reader, TraceLevel.Debug, "Parsing inner collection from element '{0}' for property '{2}' on class '{3}'", reader.Name, prop.Name, prop.PropertyInfo.Name, prop.PropertyInfo.DeclaringType);
             bool lastwastext = false;
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
             bool lastWasEnd = false;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
 
             StringBuilder textString = new StringBuilder();
 

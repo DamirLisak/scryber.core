@@ -106,17 +106,7 @@ namespace Scryber.Styles.Parsing.Typed
                 }
                 catch (Exception ex)
                 {
-                    throw new ArgumentException("Could not understand the font family expression '" + str + "'");
-                }
-                
-                if (TryGetActualFontFamily(str, out selector))
-                {
-                    return true;
-                }
-                else
-                {
-                    selector = null;
-                    return false;
+                    throw new ArgumentException("Could not understand the font family expression '" + str + "'", ex);
                 }
             }
         }

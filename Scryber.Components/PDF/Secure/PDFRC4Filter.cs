@@ -60,7 +60,7 @@ namespace Scryber.PDF.Secure
         public void FilterStream(System.IO.Stream read, System.IO.Stream write)
         {
             byte[] all = new byte[(int)(read.Length - read.Position)];
-            read.Read(all, 0, all.Length);
+            read.ReadExactly(all, 0, all.Length);
             all = FilterStream(all);
             write.Write(all, 0, all.Length);
         }

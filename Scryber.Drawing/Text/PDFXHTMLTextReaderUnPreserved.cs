@@ -183,25 +183,6 @@ namespace Scryber.Text
 
             this.Lines = new string[] { buffer.ToString() };
             this.Index = -1;
-            return;
-
-            if (this.PreserveSpace == false) {
-
-				if (char.IsWhiteSpace(txt, 0))
-					txt = " " + txt.TrimStart();
-
-				if (char.IsWhiteSpace(txt, txt.Length - 1))
-					txt = txt.TrimEnd() + " ";
-			}
-
-			txt = this.ReplaceXHTMLChars(txt);
-
-			if (this.PreserveSpace)
-				this.Lines = this.SplitXHTMLPreservedLines(txt);
-			else
-				this.Lines = this.SplitXHTMLLines(txt);
-
-			this.Index = -1;
 		}
 
 

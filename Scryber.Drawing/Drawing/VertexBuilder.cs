@@ -92,52 +92,6 @@ namespace Scryber.Drawing
 
             if (this.HasEnds)
                 cursor = this.AddEndVertextAndReturnCursor(path, cursor, inVertices);
-            
-            return;
-
-            PathData prev = null;
-            PathData curr = path.Operations[0];
-
-            Point location = curr.GetLocation(prev, AdornmentPlacements.Start);
-            double angle = 0.0;
-            double lastAngle = 0.0;
-            bool firstWasMove = false;
-
-            if (this.HasStarts)
-            {
-                if (curr.Type != PathDataType.Move)
-                {
-                    angle = curr.GetAngle(cursor, location, AdornmentPlacements.Start, this.StartIsReversed);
-                    this.AddVertex(location, angle, inVertices);
-                }
-                else
-                {
-                    firstWasMove = true;
-                }
-
-            }
-
-            for (var i = 1; i < path.Operations.Count; i++)
-            {
-                cursor = location;
-                lastAngle = angle;
-
-                prev = curr;
-                curr = path.Operations[i];
-                location = curr.GetLocation(prev, AdornmentPlacements.Start);
-
-                if (i == 1 && firstWasMove)
-                {
-                    //We need to add back in the first vertex which was a move to
-                    //and calculate the angle to the second point (taking into account
-                    angle = prev.GetAngle(cursor, location, AdornmentPlacements.Start, this.StartIsReversed);
-
-                    if (HasStarts)
-                    {
-                        AddVertex(cursor, angle, inVertices);
-                    }
-                }
-            }
         }
 
         protected Point AddStartVertexAndReturnCursor(Path path, Point cursor, List<AdornmentVertex> inVertices)

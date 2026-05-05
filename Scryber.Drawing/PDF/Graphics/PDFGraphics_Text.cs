@@ -497,38 +497,6 @@ namespace Scryber.PDF.Graphics
                 //this.CurrentFontResource.Widths.RegisterGlyphs(_stringCache, 0, _stringCache.Length);
                 this.Writer.WriteStringLiteralS(glyphs, this.CurrentFontResource.Encoding);
                 this.Writer.WriteOpCodeS(PDFOpCode.TxtPaint);
-                return;
-
-                //we have custom word spacing and there's at least one space in there space 
-                int pos = 0;
-                int nextspace = 0;
-                string glyph;
-
-                //with custom word spacing we write the blocks of text as an array
-                this.Writer.BeginArray();
-
-                int PDFUnitSpaceOffset =  -(int)(this.CustomWordSpace); //negative offset of the word spacing * the PDF unit size of a Space character.
-
-                while (pos < chars.Length && (nextspace = chars.IndexOf(' ', pos)) > -1)
-                {
-                    glyph = this.CurrentFontResource.Widths.RegisterGlyphs(chars, pos, nextspace - pos);
-                    //this.CurrentFontResource.Widths.RegisterGlyphs(_stringCache, pos, nextspace - pos);
-
-                    this.Writer.WriteStringLiteralS(glyph, this.CurrentFontResource.Encoding);
-                    this.Writer.WriteNumberS(PDFUnitSpaceOffset);
-
-                    pos = nextspace + 1;
-                }
-                if (pos < chars.Length)
-                {
-                    glyph = this.CurrentFontResource.Widths.RegisterGlyphs(chars, pos, chars.Length - pos);
-                    //this.CurrentFontResource.Widths.RegisterGlyphs(_stringCache, pos, nextspace - pos);
-
-                    this.Writer.WriteStringLiteralS(glyph, this.CurrentFontResource.Encoding);
-                }
-
-                this.Writer.EndArray();
-                this.Writer.WriteOpCodeS(PDFOpCode.TxtPaintArray);
             }
             else
             {

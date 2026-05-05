@@ -40,8 +40,6 @@ namespace Scryber.PDF.Graphics
 		/// <exception cref="NotImplementedException"></exception>
 		public static HyphenationOpportunity HyphenateLine(PDFHyphenationStrategy strategy, string chars, int start, int length)
 		{
-			HyphenationOpportunity opportunity;
-
 			//first check is to make sure we can split the word up
 			if (CheckForSymbolOrDigits(chars, start, length))
 			{

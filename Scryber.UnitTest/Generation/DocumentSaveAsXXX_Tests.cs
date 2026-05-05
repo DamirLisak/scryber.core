@@ -235,7 +235,6 @@ namespace Scryber.Core.UnitTests.Generation
         [TestMethod]
         public void HtmlLoadingDirect()
         {
-            string title = "Remote Direct";
             var src = SampleHtml;
 
             using (var sr = new System.IO.StringReader(src))
@@ -254,6 +253,8 @@ namespace Scryber.Core.UnitTests.Generation
                 }
 
             }
+            
+            Assert.Inconclusive("No checking");
         }
     }
 }

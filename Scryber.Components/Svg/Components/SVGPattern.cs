@@ -194,7 +194,7 @@ public class SVGPattern : SVGFillBase, IStyledComponent, IPDFViewPortComponent
         } 
     }
     
-    private GradientUnitType _patternContentUnits = GradientUnitType.ObjectBoundingBox;
+    //private GradientUnitType _patternContentUnits = GradientUnitType.ObjectBoundingBox;
 
     
     [PDFElement("title")]

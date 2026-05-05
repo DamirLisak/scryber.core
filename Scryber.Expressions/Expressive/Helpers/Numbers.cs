@@ -153,7 +153,6 @@ namespace Scryber.Expressive.Helpers
             a = EnsureJsonExpanded(a);
             b = EnsureJsonExpanded(b);
 
-            bool aIsUnit, bIsUnit;
             a = ConvertIfStringOrUnit(a, variables);
             b = ConvertIfStringOrUnit(b, variables);
 

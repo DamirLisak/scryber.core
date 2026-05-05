@@ -1288,9 +1288,6 @@ namespace Scryber.UnitLayouts
                 doc.SaveAsPDF(ms);
             }
 
-            Unit parentBoundsWidth = 600;
-            Unit parentBoundsHeight = 800;
-
             Assert.AreEqual(1, layout.AllPages.Count);
             var pg = layout.AllPages[0];
             Assert.AreEqual(1, pg.ContentBlock.Columns.Length);
@@ -1314,10 +1311,8 @@ namespace Scryber.UnitLayouts
             var relativeBlock = wrapperBlock.Columns[0].Contents[0] as PDFLayoutBlock;
             Assert.IsNotNull(relativeBlock);
 
-            parentBoundsWidth = expectedWidth;
-            parentBoundsHeight = expectedHeight;
+            
 
-            expectedWidth = expectedWidth ; //full width
             expectedHeight = (expectedHeight / 2.0) + 20; //50% of container + margins
 
             expectedX = 0; //inner is right align

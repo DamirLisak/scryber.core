@@ -531,7 +531,10 @@ namespace Scryber.Drawing
             }
             else if (one.StartsWith("ellipse"))
             {
+#pragma warning disable CS0618 // Type or member is obsolete
+                //not currently supported, but can still parse.
                 shape = RadialShape.Ellipse;
+#pragma warning restore CS0618 // Type or member is obsolete
                 one = one.Substring("ellipse".Length).Trim();
             }
             else
@@ -589,25 +592,19 @@ namespace Scryber.Drawing
                 
                 if (dims.Length > 0)
                 {
-                    bool vdone = false;
-                    bool hdone = false;
                     
                     switch (dims[0])
                     {
                         case "top":
-                            vdone = true;
                             v = Unit.Percent(0);
                             break;
                         case "bottom":
-                            vdone = true;
                             v = Unit.Percent(100);
                             break;
                         case "left":
-                            hdone = true;
                             h = Unit.Percent(0);
                             break;
                         case "right":
-                            hdone = true;
                             h = Unit.Percent(100);
                             break;
                         default:
@@ -621,19 +618,15 @@ namespace Scryber.Drawing
                         switch (dims[1])
                         {
                             case "top":
-                                vdone = true;
                                 v = Unit.Percent(0);
                                 break;
                             case "bottom":
-                                vdone = true;
                                 v = Unit.Percent(100);
                                 break;
                             case "left":
-                                hdone = true;
                                 h = Unit.Percent(0);
                                 break;
                             case "right":
-                                hdone = true;
                                 h = Unit.Percent(100);
                                 break;
                             default:

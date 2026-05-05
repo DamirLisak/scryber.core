@@ -54,7 +54,8 @@ namespace Scryber.Drawing
         Jpeg,
         Tiff,
         Gif,
-        Bitmap
+        Bitmap,
+        WebP
     }
 
     /// <summary>

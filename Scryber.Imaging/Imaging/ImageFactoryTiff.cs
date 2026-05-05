@@ -33,10 +33,8 @@ namespace Scryber.Imaging
 
         protected override ImageData DoLoadRawImageData(IDocument document, IComponent owner, byte[] rawData, MimeType type)
         {
-            IImageFormat format;
-            //SixLabors.ImageSharp.Configuration config = SixLabors.ImageSharp.Configuration.Default;
             var span = new ReadOnlySpan<byte>(rawData);
-            var img = Image.Load(span); // Image.Load(config, span, out format);
+            var img = Image.Load(span);
             
             ImageData data = null;
             var meta = img.Metadata.GetFormatMetadata(TiffFormat.Instance);
@@ -60,8 +58,6 @@ namespace Scryber.Imaging
 
         protected override ImageData DoDecodeImageData(Stream stream, IDocument document, IComponent owner, string path)
         {
-            IImageFormat format;
-            SixLabors.ImageSharp.Configuration config = SixLabors.ImageSharp.Configuration.Default;
             var img = Image.Load(stream);
 
             ImageData data = null;

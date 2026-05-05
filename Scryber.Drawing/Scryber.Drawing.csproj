@@ -30,7 +30,6 @@
         <DebugType>portable</DebugType>
     </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Scryber.Core.OpenType" Version="9.2.0" />
   </ItemGroup>

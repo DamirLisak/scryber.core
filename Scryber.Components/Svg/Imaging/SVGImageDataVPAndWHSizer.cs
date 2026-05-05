@@ -229,8 +229,5 @@ public class SVGImageDataVPAndWHSizer : SVGImageDataSizer
     protected override PDFTransformationMatrix DoGetCanvasToImageMatrix(Size layoutSize, Point layoutOffset, ContextBase context)
     {
         return PDFTransformationMatrix.Identity();
-        var matrix =  base.DoGetCanvasToImageMatrix(layoutSize, layoutOffset, context);
-        
-        return matrix;
     }
 }

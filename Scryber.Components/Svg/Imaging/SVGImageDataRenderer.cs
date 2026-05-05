@@ -226,10 +226,6 @@ public class SVGPDFImageDataRenderer : IDisposable
             this.DoOutputImageXObjectDictionary(len, this.ImageName, this.LayoutRenderName, this.LayoutBlockRef, this.StreamFilters, context, this.Writer);
 
         }
-        catch (Exception e)
-        {
-            throw;
-        }
         finally
         {
             if(startedStream)

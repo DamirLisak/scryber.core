@@ -248,7 +248,9 @@ namespace Scryber.Components
                 html = md.Transform(html);
                 
             }
+#pragma warning disable CS0618 // Type or member is obsolete
             HTMLFragmentParser parser = new HTMLFragmentParser(html, settings);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             Stack<IComponent> route = new Stack<IComponent>();
 

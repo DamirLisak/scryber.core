@@ -54,7 +54,7 @@ namespace Scryber.Generation.Handlebars
             int count = 0;
             var index = start;
             var length = message.Length;
-            var isEscaped = false;
+            
             
             while (index < length)
             {
@@ -193,8 +193,7 @@ namespace Scryber.Generation.Handlebars
         private static void SplitLogParts(string value, out string message, out string level, out string category, out string stage)
         {
             value = value.Trim();
-            bool hasMessage = false;
-            bool hasBinding = false;
+            
             message = string.Empty;
             
             var foundLevel = string.Empty;
@@ -211,8 +210,6 @@ namespace Scryber.Generation.Handlebars
                     foundLevel = keyvalue;
                 else if (keyword == "category")
                     foundCategory = keyvalue;
-                //else if (keyword == "stage") - not using
-                //    foundStage = keyvalue;
 
                 return string.Empty;
             });

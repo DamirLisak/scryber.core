@@ -215,8 +215,6 @@ public class FrameTemplateFileReference : FrameFileReference
         {
             bool success = false;
 
-            PDF.Native.PDFFile file = null;
-            Exception error = null;
             try
             {
                 //We need a seekable stream

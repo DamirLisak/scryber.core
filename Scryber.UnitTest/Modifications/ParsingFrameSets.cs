@@ -359,6 +359,7 @@ public class ParsingFrameSets_Test
     {
         const string ExpressionsPDFPath =
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+        
         const int startIndex = 0;
         const int pageCount = 21;
 
@@ -390,7 +391,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.AreEqual(ExpressionsPDFPath, frame.RemoteSource);
 
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(pageCount, frame.PageInsertCount);
 
             var path = frame.MapPath(frame.RemoteSource);
@@ -583,7 +584,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.AreEqual(ExpressionsPDFPath, frame.RemoteSource);
 
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(pageCount, frame.PageInsertCount);
 
             var path = frame.MapPath(frame.RemoteSource);
@@ -693,7 +694,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.AreEqual(ExpressionsPDFPath, frame.RemoteSource);
 
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(pageCount, frame.PageInsertCount);
 
             var path = frame.MapPath(frame.RemoteSource);
@@ -832,7 +833,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.AreEqual(ExpressionsPDFPath, frame.RemoteSource);
 
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(pageCount, frame.PageInsertCount);
 
             var path = frame.MapPath(frame.RemoteSource);
@@ -846,7 +847,7 @@ public class ParsingFrameSets_Test
             var innerdoc = frame.InnerHtml;
             
 
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(int.MaxValue, frame.PageInsertCount);
 
 
@@ -997,7 +998,7 @@ public class ParsingFrameSets_Test
             var frame = doc.Frameset.Frames[0];
             Assert.IsNotNull(frame);
             Assert.AreEqual(ExpressionsPDFPath, frame.RemoteSource);
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(pageCount, frame.PageInsertCount);
 
             var path = frame.MapPath(frame.RemoteSource);
@@ -1375,7 +1376,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.IsNull(frame.RemoteSource);
             Assert.IsNotNull(frame.InnerHtml);
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(int.MaxValue, frame.PageInsertCount);
 
             frame = doc.Frameset.Frames[2];
@@ -1465,7 +1466,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.AreEqual(ExpressionsPDFPath, frame.RemoteSource);
             Assert.IsNull(frame.InnerHtml);
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(pageCount, frame.PageInsertCount);
             
 
@@ -1573,7 +1574,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.AreEqual(ExpressionsPDFPath, frame.RemoteSource);
             Assert.IsNull(frame.InnerHtml);
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(pageCount, frame.PageInsertCount);
             
 
@@ -1619,7 +1620,11 @@ public class ParsingFrameSets_Test
                     caught = true;
                 }
 
+                if(!caught)
+                    throw new InvalidOperationException("Should have thrown an error when trying the output in strict mode with invalid options.");
             }
+            
+            
         }
     }
 
@@ -1628,19 +1633,7 @@ public class ParsingFrameSets_Test
     {
         const string ExpressionsPDFPath =
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
-        const string TemplatePath = 
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
-
-        const string Template = "<html id='inner1'>\n" +
-                                     "<head>\n    " +
-                                     "<title>{{concat(title, \"- Document 1\")}}</title>\n" +
-                                     "</head>\n" +
-                                     "<body id='inner1Body'>\n" +
-                                     "    <div id='div1' title='{{concat(title, \"- Document 1\")}}' style='padding:10px;'>{@:title}</div>\n" +
-                                     "    <a href='#div1' id='div2' style=\"padding:10pt\" >&lt;&lsquo;Inside the first template&rsquo;&gt;</a>\n" +
-                                     "    <img id='img1' src=\"https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/Scryber.UnitTest/Content/HTML/Images/group.png\" style=\"width:100pt; padding:10px\" />\n" +
-                                     "</body>\n" +
-                                     "</html>";
+        
 
         const int startIndex = 0;
         const int pageCount = 3;
@@ -1651,8 +1644,6 @@ public class ParsingFrameSets_Test
                   "</head>" +
                   "<frameset title='Frameset'>" +
                   "<frame src='" + ExpressionsPDFPath + "' data-page-count='" + pageCount + "' title='First'></frame>" +
-                  // "<frame src='" + TemplatePath + "' title='Second'></frame>" +
-                  // "<frame title='Third'>" + Template + "</frame>" +
                   "</frameset>" +
                   "</html>";
 
@@ -1672,7 +1663,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.IsNotNull(frame.RemoteSource);
             Assert.IsNull(frame.InnerHtml);
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(pageCount, frame.PageInsertCount);
 
 
@@ -1728,16 +1719,16 @@ public class ParsingFrameSets_Test
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
 
-        const string Template = "<html id='inner1'>\n" +
-                                     "<head>\n    " +
-                                     "<title>{{concat(title, \"- Document 1\")}}</title>\n" +
-                                     "</head>\n" +
-                                     "<body id='inner1Body'>\n" +
-                                     "    <div id='div1' title='{{concat(title, \"- Document 1\")}}' style='padding:10px;'>{@:title}</div>\n" +
-                                     "    <a href='#div1' id='div2' style=\"padding:10pt\" >&lt;&lsquo;Inside the first template&rsquo;&gt;</a>\n" +
-                                     "    <img id='img1' src=\"https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/Scryber.UnitTest/Content/HTML/Images/group.png\" style=\"width:100pt; padding:10px\" />\n" +
-                                     "</body>\n" +
-                                     "</html>";
+        // const string Template = "<html id='inner1'>\n" +
+        //                              "<head>\n    " +
+        //                              "<title>{{concat(title, \"- Document 1\")}}</title>\n" +
+        //                              "</head>\n" +
+        //                              "<body id='inner1Body'>\n" +
+        //                              "    <div id='div1' title='{{concat(title, \"- Document 1\")}}' style='padding:10px;'>{@:title}</div>\n" +
+        //                              "    <a href='#div1' id='div2' style=\"padding:10pt\" >&lt;&lsquo;Inside the first template&rsquo;&gt;</a>\n" +
+        //                              "    <img id='img1' src=\"https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/Scryber.UnitTest/Content/HTML/Images/group.png\" style=\"width:100pt; padding:10px\" />\n" +
+        //                              "</body>\n" +
+        //                              "</html>";
 
         const int startIndex = 0;
         const int pageCount = 4;
@@ -1769,7 +1760,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.IsNotNull(frame.RemoteSource);
             Assert.IsNull(frame.InnerHtml);
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(pageCount, frame.PageInsertCount);
 
 
@@ -1827,16 +1818,16 @@ public class ParsingFrameSets_Test
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
 
-        const string Template = "<html id='inner1'>\n" +
-                                     "<head>\n    " +
-                                     "<title>{{concat(title, \"- Document 2\")}}</title>\n" +
-                                     "</head>\n" +
-                                     "<body id='inner1Body'>\n" +
-                                     "    <div id='div1' title='{{concat(title, \"- Document 2\")}}' style='padding:10px;'>{@:title}</div>\n" +
-                                     "    <a href='#div1' id='div2' style=\"padding:10pt\" >&lt;&lsquo;Inside the first template&rsquo;&gt;</a>\n" +
-                                     "    <img id='img1' src=\"https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/Scryber.UnitTest/Content/HTML/Images/group.png\" style=\"width:100pt; padding:10px\" />\n" +
-                                     "</body>\n" +
-                                     "</html>";
+        // const string Template = "<html id='inner1'>\n" +
+        //                              "<head>\n    " +
+        //                              "<title>{{concat(title, \"- Document 2\")}}</title>\n" +
+        //                              "</head>\n" +
+        //                              "<body id='inner1Body'>\n" +
+        //                              "    <div id='div1' title='{{concat(title, \"- Document 2\")}}' style='padding:10px;'>{@:title}</div>\n" +
+        //                              "    <a href='#div1' id='div2' style=\"padding:10pt\" >&lt;&lsquo;Inside the first template&rsquo;&gt;</a>\n" +
+        //                              "    <img id='img1' src=\"https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/Scryber.UnitTest/Content/HTML/Images/group.png\" style=\"width:100pt; padding:10px\" />\n" +
+        //                              "</body>\n" +
+        //                              "</html>";
 
         const int startIndex = 0;
         const int pageCount = 5;
@@ -1888,7 +1879,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.IsNotNull(frame.RemoteSource);
             Assert.IsNull(frame.InnerHtml);
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(int.MaxValue, frame.PageInsertCount);
 
             // frame = doc.Frameset.Frames[1];
@@ -1943,16 +1934,16 @@ public class ParsingFrameSets_Test
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
 
-        const string Template = "<html id='inner1'>\n" +
-                                     "<head>\n    " +
-                                     "<title>{{concat(title, \"- Document 2\")}}</title>\n" +
-                                     "</head>\n" +
-                                     "<body id='inner1Body'>\n" +
-                                     "    <div id='div1' title='{{concat(title, \"- Document 2\")}}' style='padding:10px;'>{@:title}</div>\n" +
-                                     "    <a href='#div1' id='div2' style=\"padding:10pt\" >&lt;&lsquo;Inside the first template&rsquo;&gt;</a>\n" +
-                                     "    <img id='img1' src=\"https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/Scryber.UnitTest/Content/HTML/Images/group.png\" style=\"width:100pt; padding:10px\" />\n" +
-                                     "</body>\n" +
-                                     "</html>";
+        // const string Template = "<html id='inner1'>\n" +
+        //                              "<head>\n    " +
+        //                              "<title>{{concat(title, \"- Document 2\")}}</title>\n" +
+        //                              "</head>\n" +
+        //                              "<body id='inner1Body'>\n" +
+        //                              "    <div id='div1' title='{{concat(title, \"- Document 2\")}}' style='padding:10px;'>{@:title}</div>\n" +
+        //                              "    <a href='#div1' id='div2' style=\"padding:10pt\" >&lt;&lsquo;Inside the first template&rsquo;&gt;</a>\n" +
+        //                              "    <img id='img1' src=\"https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/Scryber.UnitTest/Content/HTML/Images/group.png\" style=\"width:100pt; padding:10px\" />\n" +
+        //                              "</body>\n" +
+        //                              "</html>";
 
         const int startIndex = 0;
         const int pageCount = 5;
@@ -1996,7 +1987,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.IsNotNull(frame.RemoteSource);
             Assert.IsNull(frame.InnerHtml);
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(pageCount, frame.PageInsertCount);
 
 
@@ -2111,7 +2102,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.IsNotNull(frame.RemoteSource);
             Assert.IsNull(frame.InnerHtml);
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(pageCount, frame.PageInsertCount);
 
 
@@ -2238,7 +2229,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.IsNull(frame.RemoteSource);
             Assert.IsNotNull(frame.InnerHtml);
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(int.MaxValue, frame.PageInsertCount);
             
             frame = doc.Frameset.Frames[1];
@@ -2252,7 +2243,7 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.IsNotNull(frame.RemoteSource);
             Assert.IsNull(frame.InnerHtml);
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(pageCount, frame.PageInsertCount);
 
 
@@ -2370,14 +2361,14 @@ public class ParsingFrameSets_Test
             Assert.IsNotNull(frame);
             Assert.IsNull(frame.RemoteSource);
             Assert.IsNotNull(frame.InnerHtml);
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(int.MaxValue, frame.PageInsertCount);
             
             frame = doc.Frameset.Frames[1];
             Assert.IsNotNull(frame);
             Assert.IsNull(frame.RemoteSource);
             Assert.IsNull(frame.InnerHtml); //bound to a value, rather than explicitly set
-            Assert.AreEqual(0, frame.PageStartIndex);
+            Assert.AreEqual(startIndex, frame.PageStartIndex);
             Assert.AreEqual(int.MaxValue, frame.PageInsertCount);
 
             frame = doc.Frameset.Frames[2];

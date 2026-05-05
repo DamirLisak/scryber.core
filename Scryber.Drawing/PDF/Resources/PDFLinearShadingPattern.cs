@@ -346,7 +346,6 @@ namespace Scryber.PDF.Resources
             }
 
             double radians;
-            Point offset;
             
             if (angle < 90)
             {

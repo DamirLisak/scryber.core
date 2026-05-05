@@ -117,7 +117,7 @@ namespace Scryber.PDF.Resources
             {
                 oref = this.PatternLayout.EnsureRendered(context, writer);
             }
-            catch (PDFRenderException ex)
+            catch (PDFRenderException)
             {
                 throw;
             }

@@ -36,8 +36,7 @@ public class ShowHideFrames
                                              "    <img id='img1' src=\"https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/Scryber.UnitTest/Content/HTML/Images/group.png\" style=\"width:100pt; padding:10px\" />\n" +
                                              "</body>\n" +
                                              "</html>";
-        const int startIndex = 0;
-        const int pageCount = 21;
+         const int pageCount = 21;
         const int lastSetStart = 130;
         const int lastSetCount = 0;
 
@@ -194,7 +193,6 @@ public class ShowHideFrames
                                              "    <img id='img1' src=\"https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/Scryber.UnitTest/Content/HTML/Images/group.png\" style=\"width:100pt; padding:10px\" />\n" +
                                              "</body>\n" +
                                              "</html>";
-        const int startIndex = 0;
         const int pageCount = 0;
         const int lastSetStart = 130;
         const int lastSetCount = 11;
@@ -334,19 +332,8 @@ public class ShowHideFrames
                                              "    <img id='img1' src=\"https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/Scryber.UnitTest/Content/HTML/Images/group.png\" style=\"width:100pt; padding:10px\" />\n" +
                                              "</body>\n" +
                                              "</html>";
-        const int startIndex = 0;
         const int pageCount = 21;
         const int lastSetStart = 130;
-        const int lastSetCount = 11;
-
-        PDFObjectRef firstPageRef = new PDFObjectRef(1359, 0);
-        PDFObjectRef lastFirstPageRef = new PDFObjectRef(1379, 0);
-
-        PDFObjectRef firstTemplatePageRef = new PDFObjectRef(1380, 0);
-        PDFObjectRef lastTemplatePageRef = new PDFObjectRef(1381, 0);
-        
-        PDFObjectRef first2ndSectionPageRef = new PDFObjectRef(1382, 0);
-        PDFObjectRef last2ndSectionPageRef = new PDFObjectRef(1392, 0);
         
         var src = "<html xmlns='http://www.w3.org/1999/xhtml'>" +
                   "<head>" +
@@ -454,19 +441,14 @@ public class ShowHideFrames
                                              "    <img id='img1' src=\"https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/Scryber.UnitTest/Content/HTML/Images/group.png\" style=\"width:100pt; padding:10px\" />\n" +
                                              "</body>\n" +
                                              "</html>";
-        const int startIndex = 0;
         const int pageCount = 0;
         const int lastSetStart = 130;
         const int lastSetCount = 0;
-
-        //PDFObjectRef firstPageRef = new PDFObjectRef(1359, 0);
-        //PDFObjectRef lastFirstPageRef = new PDFObjectRef(1379, 0);
+        
 
         PDFObjectRef firstTemplatePageRef = new PDFObjectRef(22, 0);
         PDFObjectRef lastTemplatePageRef = new PDFObjectRef(23, 0);
         
-        // PDFObjectRef first2ndSectionPageRef = new PDFObjectRef(1382, 0);
-        // PDFObjectRef last2ndSectionPageRef = new PDFObjectRef(1392, 0);
         
         var src = "<html xmlns='http://www.w3.org/1999/xhtml'>" +
                   "<head>" +

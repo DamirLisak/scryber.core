@@ -44,7 +44,7 @@ namespace Scryber.UnitSamples
 
                 // Generate the PDF (SaveAsPDF handles all processing)
                 var outputPdfPath = "wwwf_tigers_report_template.pdf";
-                using (var stream = GetOutputStream("Samples", "outputPdfPath.pdf"))
+                using (var stream = GetOutputStream("Samples", outputPdfPath))
                 {
                     doc.SaveAsPDF(stream);
                 }

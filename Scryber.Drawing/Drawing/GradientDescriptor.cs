@@ -134,31 +134,6 @@ namespace Scryber.Drawing
         {
             throw new NotSupportedException(
                 "Do not use the Repeating Functions - pre-caclulate the repeats and use the functions type 2 .");
-            
-            List<PDFGradientFunction2> functions = new List<PDFGradientFunction2>();
-
-            var col0Index = 0;
-            var col1Index = 1;
-
-            for (int i = 0; i < bounds.Count; i++)
-            {
-                var color0 = this.Colors[col0Index].Color;
-                var color1 = this.Colors[col1Index].Color;
-
-                var func = new PDFGradientFunction2(color0, color1);
-                functions.Add(func);
-
-                col0Index++;
-                col1Index++;
-
-                if (col1Index >= this.Colors.Count)
-                {
-                    col0Index = 0;
-                    col1Index = 1;
-                }
-            }
-
-            return functions;
         }
 
         /// <summary>

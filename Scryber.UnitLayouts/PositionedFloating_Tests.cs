@@ -1858,7 +1858,6 @@ namespace Scryber.UnitLayouts
             Assert.AreEqual(2, first.Columns[0].Contents.Count); //line for floats and para
             Assert.AreEqual(7, first.PositionedRegions.Count);
 
-            var left = 0;
             var index = 0;
             var floatAddition = first.Columns[0].Floats;
             
@@ -2041,7 +2040,6 @@ namespace Scryber.UnitLayouts
             Assert.AreEqual(2, first.Columns[0].Contents.Count); //line for floats and para
             Assert.AreEqual(7, first.PositionedRegions.Count);
 
-            var left = 0;
             var index = 0;
             var floatAddition = first.Columns[0].Floats;
             var y = 80 + 20 + 220; //relative offset + padding + relative top
@@ -2245,7 +2243,6 @@ namespace Scryber.UnitLayouts
             Assert.AreEqual(2, first.Columns[0].Contents.Count); //line for floats and para
             Assert.AreEqual(7, first.PositionedRegions.Count);
 
-            var left = 0;
             var index = 0;
             var floatAddition = first.Columns[0].Floats;
             
@@ -2473,7 +2470,6 @@ namespace Scryber.UnitLayouts
             Assert.AreEqual(7, first.PositionedRegions.Count);
             Assert.AreEqual(w, first.Width); // make sure the 90% width is applied
             
-            var left = 0;
             var index = 0;
             var floatAddition = first.Columns[0].Floats;
             
@@ -2661,7 +2657,6 @@ namespace Scryber.UnitLayouts
             
             Assert.AreEqual(7, nest.PositionedRegions.Count);
 
-            var left = 0;
             var index = 0;
             var floatAddition = nest.Columns[0].Floats;
             
@@ -2733,7 +2728,6 @@ namespace Scryber.UnitLayouts
 
             
             Assert.AreEqual(7, nest.PositionedRegions.Count);
-            left = 0; 
             index = 0; 
             floatAddition = nest.Columns[0].Floats;
             
@@ -2835,7 +2829,6 @@ namespace Scryber.UnitLayouts
 
             
             Assert.AreEqual(7, nest.PositionedRegions.Count);
-            left = 0; 
             index = 0; 
             floatAddition = nest.Columns[0].Floats;
             
@@ -2974,7 +2967,6 @@ namespace Scryber.UnitLayouts
             
             Assert.AreEqual(7, nest.PositionedRegions.Count);
 
-            var left = 0;
             var index = 0;
             var floatAddition = nest.Columns[0].Floats;
             
@@ -3046,7 +3038,6 @@ namespace Scryber.UnitLayouts
 
             
             Assert.AreEqual(7, nest.PositionedRegions.Count);
-            left = 0; 
             index = 0; 
             floatAddition = nest.Columns[0].Floats;
             
@@ -3148,7 +3139,7 @@ namespace Scryber.UnitLayouts
 
             
             Assert.AreEqual(7, nest.PositionedRegions.Count);
-            left = 0; 
+
             index = 0; 
             floatAddition = nest.Columns[0].Floats;
             
@@ -3288,7 +3279,6 @@ namespace Scryber.UnitLayouts
             
             Assert.AreEqual(7, nest.PositionedRegions.Count);
 
-            var left = 0;
             var index = 0;
             var floatAddition = nest.Columns[0].Floats;
             var insets = new Unit[] { 0, 90, 0, 90, 180, 0, 90 };
@@ -3351,7 +3341,6 @@ namespace Scryber.UnitLayouts
 
             
             Assert.AreEqual(7, nest.PositionedRegions.Count);
-            left = 0; 
             index = 0; 
             floatAddition = nest.Columns[0].Floats;
             
@@ -3431,7 +3420,7 @@ namespace Scryber.UnitLayouts
 
             
             Assert.AreEqual(7, nest.PositionedRegions.Count);
-            left = 0; 
+
             index = 0; 
             floatAddition = nest.Columns[0].Floats;
             

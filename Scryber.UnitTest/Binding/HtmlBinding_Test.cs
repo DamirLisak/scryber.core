@@ -319,7 +319,6 @@ namespace Scryber.Core.UnitTests.Binding
         [TestCategory("Binding")]
         public void BindXHtmlContent_AppendValue()
         {
-            var literal = "";
             var id = "Appended";
             var contentString = @"<div id='" + id + "' xmlns='http://www.w3.org/1999/xhtml' >Inner Content</div>";
 

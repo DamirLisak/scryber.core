@@ -94,15 +94,14 @@ namespace Scryber.PDF.Layout
         #endregion
 
         #region public override PDFUnit Width {get;}
-
-        private Unit _width;
+        
 
         /// <summary>
-        /// Gets the height of this begin text run - PDFUnit.Zero or Any left padding on the inline run style
+        /// Gets the width of this begin text run - always PDFUnit.Zero
         /// </summary>
         public override Unit Width
         {
-            get { return _width; }
+            get { return Unit.Zero; }
         }
 
         #endregion

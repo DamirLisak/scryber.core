@@ -1378,8 +1378,7 @@ namespace Scryber.UnitLayouts
             const int PageWidth = 400;
             const int PageHeight = 500;
             const int ItemCount = 5;
-            const double DefaultNumberWidth = 30.0;
-            const double DefaultGutterWidth = 10.0;
+            
 
             Document doc = new Document();
             Section section = new Section();
@@ -1470,8 +1469,7 @@ namespace Scryber.UnitLayouts
         {
             const int PageWidth = 400;
             const int PageHeight = 500;
-            const double DefaultNumberWidth = 30.0;
-            const double DefaultGutterWidth = 10.0;
+            
 
             Document doc = new Document();
             Section section = new Section();

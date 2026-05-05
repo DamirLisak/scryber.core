@@ -48,7 +48,7 @@ namespace Scryber.Expressive.Functions.String
                 }
                 catch (Exception ex)
                 {
-                    throw new ArgumentException("The expression '" + exprString + "' could not be compiled into a valid expression");
+                    throw new ArgumentException("The expression '" + exprString + "' could not be compiled into a valid expression", ex);
                 }
 
                 _last = expr;

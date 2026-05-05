@@ -1282,7 +1282,7 @@ namespace Scryber.Core.UnitTests.Svg
         public void SVGMarkers_VariousTypes()
         {
             var path = DocStreams.AssertGetTemplatePath("SVG/SVGMarkers_VariousTypes.html");
-            var angle = Math.PI;
+
             using (var doc = Document.ParseDocument(path))
             {
                 doc.RenderOptions.Compression = OutputCompressionType.None;

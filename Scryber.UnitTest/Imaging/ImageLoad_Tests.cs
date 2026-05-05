@@ -4,7 +4,7 @@ using Scryber.Components;
 using Scryber.PDF.Layout;
 using Scryber.PDF;
 using System.Collections.Generic;
-using io = System.IO;
+using IO = System.IO;
 using Scryber.Drawing;
 using Scryber.Imaging;
 using Scryber.PDF.Resources;
@@ -54,8 +54,8 @@ namespace Scryber.Core.UnitTests.Imaging
             var factory = new Scryber.Imaging.ImageFactoryPng();
             var path = DocStreams.AssertGetTemplatePath("HTML/Images/group.png");
 
-            if (!io.File.Exists(path))
-                throw new io.FileNotFoundException(path);
+            if (!IO.File.Exists(path))
+                throw new IO.FileNotFoundException(path);
 
             var data = factory.LoadImageData(doc, page, path) as ImageRasterData;
             doc.RemoteRequests.EnsureRequestsFullfilled();
@@ -123,10 +123,10 @@ namespace Scryber.Core.UnitTests.Imaging
             var factory = new Scryber.Imaging.ImageFactoryPng();
             var path = DocStreams.AssertGetTemplatePath("HTML/Images/group.png");
 
-            if (!io.File.Exists(path))
-                throw new io.FileNotFoundException(path);
+            if (!IO.File.Exists(path))
+                throw new IO.FileNotFoundException(path);
 
-            var raw = io.File.ReadAllBytes(path);
+            var raw = IO.File.ReadAllBytes(path);
             var type = MimeType.PngImage;
             
             var data = factory.LoadImageData(doc, page, raw, type) as ImageRasterData;
@@ -158,11 +158,11 @@ namespace Scryber.Core.UnitTests.Imaging
             var factory = new Scryber.Imaging.ImageFactoryJpeg();
             var path = DocStreams.AssertGetTemplatePath("HTML/Images/Group.jpg");
 
-            if (!io.File.Exists(path))
-                throw new io.FileNotFoundException(path);
+            if (!IO.File.Exists(path))
+                throw new IO.FileNotFoundException(path);
             
 
-            var raw = io.File.ReadAllBytes(path);
+            var raw = IO.File.ReadAllBytes(path);
             var type = MimeType.JpegImage;
             
             var data = factory.LoadImageData(doc, page, raw, type) as ImageRasterData;
@@ -261,8 +261,8 @@ namespace Scryber.Core.UnitTests.Imaging
             var path = DocStreams.AssertGetTemplatePath("HTML/Images/groupBasic.tiff");
             
      
-            if (!io.File.Exists(path))
-                throw new io.FileNotFoundException(path);
+            if (!IO.File.Exists(path))
+                throw new IO.FileNotFoundException(path);
 
             var data = factory.LoadImageData(doc, page, path) as ImageRasterData;
             doc.RemoteRequests.EnsureRequestsFullfilled();
@@ -295,11 +295,11 @@ namespace Scryber.Core.UnitTests.Imaging
             var path = DocStreams.AssertGetTemplatePath("HTML/Images/groupBasic.tiff");
             
      
-            if (!io.File.Exists(path))
-                throw new io.FileNotFoundException(path);
+            if (!IO.File.Exists(path))
+                throw new IO.FileNotFoundException(path);
             
             
-            var raw = io.File.ReadAllBytes(path);
+            var raw = IO.File.ReadAllBytes(path);
             var type = MimeType.TiffImage;
             
             var data = factory.LoadImageData(doc, page, raw, type) as ImageRasterData;
@@ -836,29 +836,29 @@ namespace Scryber.Core.UnitTests.Imaging
             var path = DocStreams.AssertGetTemplatePath("HTML/Images/group.jpg");
 
             
-            using (var stream = new System.IO.FileStream(path, io.FileMode.Open))
+            using (var stream = new System.IO.FileStream(path, IO.FileMode.Open))
             {
                 byte[] marker = new byte[2];
-                stream.Read(marker);
+                stream.ReadExactly(marker);
                 Assert.AreEqual(0xFF, marker[0]);
                 Assert.AreEqual(0xD8, marker[1]);
 
                 long pos = 2;
 
                 byte[] appo = new byte[2];
-                stream.Read(appo);
+                stream.ReadExactly(appo);
                 Assert.AreEqual(0xFF, appo[0]);
                 Assert.AreEqual(0xE0, appo[1]);
 
 
                 byte[] len = new byte[2];
-                stream.Read(len);
+                stream.ReadExactly(len);
                 ushort length = (ushort)((int)len[1] | (len[0] << 8));
 
                 Assert.AreEqual(16, length);
 
                 byte[] ident = new byte[5];
-                stream.Read(ident); //JFIF_
+                stream.ReadExactly(ident); //JFIF_
                 Assert.AreEqual(0x4A, ident[0]); //J
                 Assert.AreEqual(0x46, ident[1]); //F
                 Assert.AreEqual(0x49, ident[2]); //I
@@ -866,20 +866,20 @@ namespace Scryber.Core.UnitTests.Imaging
                 Assert.AreEqual(0x00, ident[4]); //null
 
                 byte[] vers = new byte[2];
-                stream.Read(vers);
+                stream.ReadExactly(vers);
 
                 Assert.AreEqual(0x01, vers[0]);
                 Assert.AreEqual(0x01, vers[1]);
 
                 byte[] density = new byte[1];
-                stream.Read(density);
+                stream.ReadExactly(density);
                 Assert.AreEqual(0, density[0]);
 
                 byte[] xdensities = new byte[2];
                 byte[] ydensities = new byte[2];
 
-                stream.Read(xdensities);
-                stream.Read(ydensities);
+                stream.ReadExactly(xdensities);
+                stream.ReadExactly(ydensities);
 
                 ushort xdensity = (ushort)(xdensities[0] << 8 | xdensities[1]);
                 ushort ydensity = (ushort)(ydensities[0] << 8 | ydensities[1]);
@@ -894,8 +894,8 @@ namespace Scryber.Core.UnitTests.Imaging
                 while (pos < stream.Length)
                 {
                     stream.Position = pos;
-                    stream.Read(marker); //looking for 0xFFC0 - start of frame;
-                    stream.Read(len);
+                    stream.ReadExactly(marker); //looking for 0xFFC0 - start of frame;
+                    stream.ReadExactly(len);
                     if (marker[0] != 0xFF)
                         throw new Exception("did not hit the start of a JPEG file block");
 
@@ -903,20 +903,20 @@ namespace Scryber.Core.UnitTests.Imaging
                     {
                         //byte - precision
                         byte[] prec = new byte[1];
-                        stream.Read(prec);
+                        stream.ReadExactly(prec);
 
                         //ushort - no lines aka height
                         var lines = new byte[2];
-                        stream.Read(lines);
+                        stream.ReadExactly(lines);
                         h = (ushort)((int)(lines[0] << 8) | lines[1]);
 
                         //ushort - sample per line aka width
                         var samples = new byte[2];
-                        stream.Read(samples);
+                        stream.ReadExactly(samples);
                         w = (ushort)((int)(samples[0] << 8) | samples[1]);
 
                         byte[] components = new byte[1];
-                        stream.Read(components);
+                        stream.ReadExactly(components);
 
                         bpp = prec[0] * (int)components[0];
                         break;
@@ -952,29 +952,29 @@ namespace Scryber.Core.UnitTests.Imaging
 
             var path = DocStreams.AssertGetTemplatePath("HTML/Images/Toroid24.jpg");
             
-            using (var stream = new System.IO.FileStream(path, io.FileMode.Open))
+            using (var stream = new System.IO.FileStream(path, IO.FileMode.Open))
             {
                 byte[] marker = new byte[2];
-                stream.Read(marker);
+                stream.ReadExactly(marker);
                 Assert.AreEqual(0xFF, marker[0]);
                 Assert.AreEqual(0xD8, marker[1]);
 
                 long pos = 2;
 
                 byte[] appo = new byte[2];
-                stream.Read(appo);
+                stream.ReadExactly(appo);
                 Assert.AreEqual(0xFF, appo[0]);
                 Assert.AreEqual(0xE0, appo[1]);
 
 
                 byte[] len = new byte[2];
-                stream.Read(len);
+                stream.ReadExactly(len);
                 ushort length = (ushort)((int)len[1] | (len[0] << 8));
 
                 Assert.AreEqual(16, length);
 
                 byte[] ident = new byte[5];
-                stream.Read(ident); //JFIF_
+                stream.ReadExactly(ident); //JFIF_
                 Assert.AreEqual(0x4A, ident[0]); //J
                 Assert.AreEqual(0x46, ident[1]); //F
                 Assert.AreEqual(0x49, ident[2]); //I
@@ -982,20 +982,20 @@ namespace Scryber.Core.UnitTests.Imaging
                 Assert.AreEqual(0x00, ident[4]); //null
 
                 byte[] vers = new byte[2];
-                stream.Read(vers);
+                stream.ReadExactly(vers);
 
                 Assert.AreEqual(0x01, vers[0]);
                 Assert.AreEqual(0x01, vers[1]);
 
                 byte[] density = new byte[1];
-                stream.Read(density);
+                stream.ReadExactly(density);
                 Assert.AreEqual(0, density[0]);
 
                 byte[] xdensities = new byte[2];
                 byte[] ydensities = new byte[2];
 
-                stream.Read(xdensities);
-                stream.Read(ydensities);
+                stream.ReadExactly(xdensities);
+                stream.ReadExactly(ydensities);
 
                 ushort xdensity = (ushort)(xdensities[0] << 8 | xdensities[1]);
                 ushort ydensity = (ushort)(ydensities[0] << 8 | ydensities[1]);
@@ -1010,8 +1010,8 @@ namespace Scryber.Core.UnitTests.Imaging
                 while (pos < stream.Length)
                 {
                     stream.Position = pos;
-                    stream.Read(marker); //looking for 0xFFC0 - start of frame;
-                    stream.Read(len);
+                    stream.ReadExactly(marker); //looking for 0xFFC0 - start of frame;
+                    stream.ReadExactly(len);
                     if (marker[0] != 0xFF)
                         throw new Exception("did not hit the start of a JPEG file block");
 
@@ -1019,20 +1019,20 @@ namespace Scryber.Core.UnitTests.Imaging
                     {
                         //byte - precision
                         byte[] prec = new byte[1];
-                        stream.Read(prec);
+                        stream.ReadExactly(prec);
 
                         //ushort - no lines aka height
                         var lines = new byte[2];
-                        stream.Read(lines);
+                        stream.ReadExactly(lines);
                         h = (ushort)((int)(lines[0] << 8) | lines[1]);
 
                         //ushort - sample per line aka width
                         var samples = new byte[2];
-                        stream.Read(samples);
+                        stream.ReadExactly(samples);
                         w = (ushort)((int)(samples[0] << 8) | samples[1]);
 
                         byte[] components = new byte[1];
-                        stream.Read(components);
+                        stream.ReadExactly(components);
 
                         bpp = prec[0] * (int)components[0];
                         break;

@@ -1480,15 +1480,11 @@ namespace Scryber.UnitLayouts
 
             Assert.IsNotNull(layout, "The layout was not saved from the event");
 
-            PDFLayoutComponentRun lrun;
-
             //1. Natural Size
             var lpg = layout.AllPages[0];
             var reg = lpg.ContentBlock.Columns[0];
             var line = reg.Contents[0] as PDFLayoutLine;
 
-            //first layout line
-            var halflead = (60 * 0.2) / 2; //half leading between the last descender and the bottom
             Assert.IsNotNull(line);
             //Assert.AreEqual(line.Height.PointsValue - line.BaseLineToBottom.PointsValue - halflead, ImageNaturalHeight.PointsValue);
 
@@ -1598,8 +1594,7 @@ namespace Scryber.UnitLayouts
 
             Assert.IsNotNull(layout, "The layout was not saved from the event");
 
-            PDFLayoutComponentRun lrun;
-
+            
             //1. Natural Size
             var lpg = layout.AllPages[0];
             var reg = lpg.ContentBlock.Columns[0];
@@ -1773,8 +1768,7 @@ namespace Scryber.UnitLayouts
 
             Assert.IsNotNull(layout, "The layout was not saved from the event");
 
-            PDFLayoutComponentRun lrun;
-
+            
             //1. Natural Size
             var lpg = layout.AllPages[0];
             var reg = lpg.ContentBlock.Columns[0];

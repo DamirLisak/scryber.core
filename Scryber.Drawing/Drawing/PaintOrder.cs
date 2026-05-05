@@ -42,7 +42,7 @@ namespace Scryber.Drawing
                 po = Parse(value);
                 result = true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 po = Default;
             }

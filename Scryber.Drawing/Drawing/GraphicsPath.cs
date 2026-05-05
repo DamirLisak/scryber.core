@@ -102,9 +102,6 @@ namespace Scryber.Drawing
             
             if (null != this._addornments)
             {
-                
-                PathData prev = null;
-                PathData curr = null;
                
                 var hasStarts = this._addornments.HasStarts(currentOrder);
                 var hasMids = this._addornments.HasMids(currentOrder);

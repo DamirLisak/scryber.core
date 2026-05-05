@@ -25,7 +25,7 @@ namespace Scryber.Expressive.Functions.Logical
                 else if(result is double d && (double.IsNaN(d)  || double.IsInfinity(d)))
                     result = parameters[1].Evaluate(variables);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 result = parameters[1].Evaluate(variables);
             }

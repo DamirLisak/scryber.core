@@ -517,17 +517,9 @@ namespace Scryber.UnitLayouts
             var region = layout.AllPages[0].ContentBlock.Columns[0];
 
 
-            var em = 24.0;  //Point size of font
-            var lead = 24.0 * 1.2; //full leading
+            const double em = 24.0;  //Point size of font
+            const double lead = em * 1.2; //full leading
 
-
-            //default sans-sefif is set up as follows
-            var space = em * 0.2; // line leading - point size
-            var desc = em * 0.25;  // descender height 6pt
-            var asc = em * 0.75;  // ascender height 18pt
-
-            var pgHeight = layout.AllPages[0].Size.Height - pg.Margins.Top - pg.Margins.Bottom;
-            var lineCount = 4.0;
             double offsetY = 0; // pgHeight.PointsValue - (lineCount * lead);
 
             //The textrunbegin holds the starting position for rendering the text from the TotalBounds
@@ -646,8 +638,7 @@ namespace Scryber.UnitLayouts
             Assert.IsNotNull(layout, "The layout was not saved from the event");
             var region = layout.AllPages[0].ContentBlock.Columns[0];
 
-            var em = 24.0;  //Point size of font
-
+            
             //default sans-sefif is set up as follows
             var pgContentWidth = layout.AllPages[0].Width - (pg.Margins.Left + pg.Margins.Right);
 
@@ -719,8 +710,7 @@ namespace Scryber.UnitLayouts
             Assert.IsNotNull(layout, "The layout was not saved from the event");
             var region = layout.AllPages[0].ContentBlock.Columns[0];
 
-            var em = 24.0;  //Point size of font
-
+            
             //default sans-sefif is set up as follows
             var pgContentWidth = layout.AllPages[0].Width - (pg.Margins.Left + pg.Margins.Right);
 
@@ -791,8 +781,7 @@ namespace Scryber.UnitLayouts
             Assert.IsNotNull(layout, "The layout was not saved from the event");
             var region = layout.AllPages[0].ContentBlock.Columns[0];
 
-            var em = 24.0;  //Point size of font
-
+            
             //default sans-sefif is set up as follows
             var pgContentWidth = layout.AllPages[0].Width - (pg.Margins.Left + pg.Margins.Right);
 
@@ -855,8 +844,7 @@ namespace Scryber.UnitLayouts
             Assert.IsNotNull(layout, "The layout was not saved from the event");
             var region = layout.AllPages[0].ContentBlock.Columns[0];
 
-            var em = 24.0;  //Point size of font
-
+            
             //default sans-sefif is set up as follows
             var pgContentWidth = layout.AllPages[0].Width - (pg.Margins.Left + pg.Margins.Right);
 
@@ -1034,8 +1022,7 @@ namespace Scryber.UnitLayouts
             Assert.IsNotNull(layout, "The layout was not saved from the event");
             var region = layout.AllPages[0].ContentBlock.Columns[0];
 
-            var em = 24.0;  //Point size of font
-
+            
             //default sans-sefif is set up as follows
             var pgContentWidth = layout.AllPages[0].Width - (pg.Margins.Left + pg.Margins.Right);
             Assert.AreEqual(3, region.Contents.Count);

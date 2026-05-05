@@ -116,9 +116,9 @@ namespace Scryber.Drawing
             bool success = false;
             try
             {
-                success = TransformOperationSet.ParseIntoSet(operations, value);
+                success = ParseIntoSet(operations, value);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 operations = null;
                 success = false;
@@ -133,7 +133,6 @@ namespace Scryber.Drawing
         {
             MatrixTransformTypes type;
             TransformOperation operation = null;
-            TransformOperation first = null;
             
             int opLength;
             bool xOnly = false;
