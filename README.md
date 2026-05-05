@@ -285,6 +285,35 @@ SVG's can be included inline within the document or using the embed element, tha
 https://paperwork.help/learning/06-content/02_svg_basics.html
 
 ---
+### Font Support
+
+The library includes 16 standard fonts that can be embedded. 
+THe system fonts, and custom fonts can be configured and loaded at initial execution time
+
+https://paperwork.help/configuration/font-configuration.html
+
+Other fonts can also be defined through links or the @font-face rule
+
+```html
+<!-- link to google (watch the XML tag for a link) -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<!-- or download and reference locally -->
+<style>
+    @font-face {
+        font-family: 'Roboto';
+        src: url('../fonts/Roboto-Regular.ttf') format('truetype');
+        font-weight: 400;
+        font-style: normal;
+    }
+    
+    body{
+        font-family: 'Roboto', sans-serif;
+    }
+</style>
+```
+https://paperwork.help/learning/05-typography/03_web_fonts.html
+
+---
 
 ### Modifying existing files
 
