@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Security;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scryber.Components;
 using Scryber.Drawing;
 using Scryber.PDF.Layout;
 using Scryber.PDF;
+using Scryber.PDF.Secure;
 
 
 namespace Scryber.UnitLayouts
@@ -552,7 +554,6 @@ namespace Scryber.UnitLayouts
         [TestMethod()]
         public void EllipseBlockTest()
         {
-
             var doc = new Document();
             var page = new Page();
             page.Margins = new Drawing.Thickness(20);
