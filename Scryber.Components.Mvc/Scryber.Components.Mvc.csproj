@@ -4,14 +4,14 @@
     <TargetFrameworks>net10.0;net8.0;net9.0</TargetFrameworks>
     <PackOnBuild>true</PackOnBuild>
     <PackageId>Scryber.Core.Mvc</PackageId>
-    <PackageVersion>9.3.1.0</PackageVersion>
-    <Version>9.3.1.0</Version>
+    <PackageVersion>9.5.0.0</PackageVersion>
+    <Version>9.5.0.0</Version>
     <Authors>richard@paperworkday.com</Authors>
-    <Description>The Mvc extensions for the Scryber.Core PDF creation engine - change the way you make documents.
+    <Description>The Mvc extensions for the Scryber.Core PDF creation engine - change the way you make documents. 
+Scryber is an advanced PDF generation engine based around HTML templates with CSS styles and SVG drawing. It includes full flowing pages, dynamic template binding on your object model and referenced external files, images, css and fonts.
+Easily create documents from your Apps, MVC sites, or Javascipt ajax calls.
 
-Scryber is an advanced PDF generation engine based around HTML templates with CSS styles and SVG drawing, or just code it. It includes full flowing pages, dynamic template binding on your object model and referenced external files, images, css and fonts. Easily create documents from your Apps, MVC sites, or Javascipt ajax calls.
-
-This framework is built entirely in .NET6 and Net Standard 2.0 and is released under the LGPL licence so you can use to it in commercial applications.</Description>
+This framework is built entirely in .NET supporting Blazor WASM and is released under the LGPL licence so you can use to it in commercial applications.</Description>
     <Copyright>Richard Hewitson 2026</Copyright>
     <License>LICENSE.md</License>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
@@ -19,7 +19,14 @@ This framework is built entirely in .NET6 and Net Standard 2.0 and is released u
       <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Owners>richard@scryber.co.uk</Owners>
     <PackageProjectUrl>https://github.com/richard-scryber/scryber.core</PackageProjectUrl>
-    <PackageReleaseNotes>9.3.1.0
+    <PackageReleaseNotes>9.5.0.0
+BREAKING RELEASE
+Removed support for Net Standard 2.0, and Image Sharp updated to 3.1.2
+All libraries updated to include dotnet 8/9/10
+Added support image format webP
+Clean up codebase to remove compiler warnings
+        
+9.3.1.0
 Updated to the latest version of the Core Library
 New features include @page with :first, :left and :right, cell rowSpan support, column-rule and column-fill
 Initial support for display:flex, flex-grid and table(-xxx)
@@ -123,7 +130,7 @@ See: https://scrybercore.readthedocs.io/en/latest/version_history.html for a ful
     <Summary>The MVC extensions for the Scryber PDF creation engine - easy, dynamic, flowing PDF document creation using html templates, css support and model injection in dotnet 6</Summary>
     <PackageTags>Scryber; PDF; dotnet core; MVC; HTML2PDF; dotnet_6</PackageTags>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>9.3.1.0</FileVersion>
+    <FileVersion>9.5.0.0</FileVersion>
       <PackageIcon>PaperworkLogoTransparent.png</PackageIcon>
     <Title>Scryber MVC Extensions</Title>
     <PackageIconUrl>https://raw.githubusercontent.com/richard-scryber/scryber.core/master/PaperworkLogoTransparent.png</PackageIconUrl>
@@ -134,7 +141,7 @@ See: https://scrybercore.readthedocs.io/en/latest/version_history.html for a ful
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.9" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.3.9" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
-    <PackageReference Include="Scryber.Core" Version="9.3.1" />
+    <PackageReference Include="Scryber.Core" Version="9.5.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.3" />
   </ItemGroup>
       

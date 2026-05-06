@@ -6,7 +6,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Scryber.snk</AssemblyOriginatorKeyFile>
     <PackageId>Scryber.Core</PackageId>
-    <PackageVersion>9.5.0.0-alpha</PackageVersion>
+    <PackageVersion>9.5.0.0</PackageVersion>
     <Authors>richard@paperworkday.com</Authors>
     <Copyright>Richard Hewitson 2026</Copyright>
     <License>LICENSE.md</License>
@@ -14,8 +14,12 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>  
     <Owners>richard@scryber.co.uk</Owners>
     <PackageProjectUrl>https://github.com/richard-scryber/scryber.core</PackageProjectUrl>
-    <PackageReleaseNotes>9.5.0.0-alpha
-First release for checking, no longer supporting Net Standard 2.0, and Image Sharp updated to 3.1.2
+    <PackageReleaseNotes>9.5.0.0
+BREAKING RELEASE
+Removed support for Net Standard 2.0, and Image Sharp updated to 3.1.2
+All libraries updated to include dotnet 8/9/10
+Added support image format webP 
+Clean up codebase to remove compiler warnings
 
 9.3.1.0
 Fixes for break-before/after to take proiority over page-break-before
