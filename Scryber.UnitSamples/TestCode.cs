@@ -54,6 +54,35 @@ public class TestCode : SampleBase
         Assert.Inconclusive("Need to validate the size and layout.");
     }
     
+    [TestMethod]
+    public void LogoSVGImage()
+    {
+        
+
+        //documents can either contain a body **or** a frameset.
+        //Not both.
+        var doc = new HTMLDocument();
+        doc.Body = new HTMLBody();
+        doc.Body.Contents.Add("All the content goes here.");
+        var img = new Image();
+        var path = GetTemplatePath("images", "Paperwork logo transparent.svg", true);
+        img.Source = path;
+        img.Style.Border.Width = 1;
+        //img.Style.Size.Width = 400;
+        //img.Style.Size.Height = 300;
+        doc.Body.Contents.Add(img);
+        
+        
+        
+        using (var ms = DocStreams.GetOutputStream("TransparentLogo.pdf"))
+        {
+            doc.AppendTraceLog = true;
+            doc.SaveAsPDF(ms);
+        }
+        
+        Assert.Inconclusive("Need to validate the size and layout.");
+    }
+    
     
 
     [TestMethod]

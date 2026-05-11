@@ -52,8 +52,8 @@ public class SVGImageDataEmptySizer : SVGImageDataSizer
 
     protected override Rect? DoGetClippingRect(Point offset, Size available, ContextBase context)
     {
-        //var rect = base.DoGetClippingRect(offset, available, context);
-        var rect = new Rect(offset, available);
+        var rect = base.DoGetClippingRect(offset, available, context);
+        rect = new Rect(offset, available);
         return rect;
     }
 

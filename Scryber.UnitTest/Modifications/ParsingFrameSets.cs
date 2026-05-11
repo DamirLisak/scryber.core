@@ -223,7 +223,7 @@ public class ParsingFrameSets_Test
     public void Frameset_05_ParseSingleFrameWithTenInnerPages()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const int startIndex = 11;
         const int pageCount = 10;
         PDFObjectRef firstPageRef = new PDFObjectRef(1340, 0);
@@ -290,7 +290,7 @@ public class ParsingFrameSets_Test
     public void Frameset_06_ParseSingleFrameWithFinalPages()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const int startIndex = 110;
         const int pageCount = 141 - startIndex;
         
@@ -358,7 +358,7 @@ public class ParsingFrameSets_Test
     public void Frameset_07_ParseSingleFrameWithFirstPages()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         
         const int startIndex = 0;
         const int pageCount = 21;
@@ -441,7 +441,7 @@ public class ParsingFrameSets_Test
     public void Frameset_10_ParseTwoFramesWithSectionsOfSameDocument()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
 
         const int firstStartIndex = 0;
         const int secondStartIndex = 100;
@@ -548,7 +548,7 @@ public class ParsingFrameSets_Test
     public void Frameset_11_ParseTwoFramesWithFirstPagesAndRemoteTemplate()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string RemoteTemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/Scryber.UnitTest/Content/HTML/HelloWorld.xhtml";
         const int startIndex = 0;
@@ -646,7 +646,7 @@ public class ParsingFrameSets_Test
     public void Frameset_12_ParseTwoFramesWithFirstPagesAndInlineTemplate()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplateContent = "<html id='inner'>\n" +
                                              "<head>\n    " +
                                              "<title>{@:title}</title>\n" + //We set the base in the template to load  the relative image.
@@ -780,7 +780,7 @@ public class ParsingFrameSets_Test
     public void Frameset_13_ParseThreeFramesWithFirstPagesInlineTemplateAndLastPages()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplateContent = "<html id='inner'>\n" +
                                              "<head>\n    " +
                                              "<title>{@:title}</title>\n" +
@@ -952,7 +952,7 @@ public class ParsingFrameSets_Test
     public void Frameset_14_ParseFourFramesWithFirstPagesRemoteOneMiddleAndLastInline()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
         
@@ -1121,7 +1121,7 @@ public class ParsingFrameSets_Test
     public void Frameset_15_SmallSubset()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
         
@@ -1418,7 +1418,7 @@ public class ParsingFrameSets_Test
     public void Frameset_21_ParseMultipleWithMixedOutputOverflowWarning()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
         
@@ -1524,7 +1524,7 @@ public class ParsingFrameSets_Test
     public void Frameset_22_ParseMultipleWithMixedOutputOverflowError()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
         
@@ -1632,7 +1632,7 @@ public class ParsingFrameSets_Test
     public async Task Frameset_30_AsyncParseRemotePDF()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         
 
         const int startIndex = 0;
@@ -1715,7 +1715,7 @@ public class ParsingFrameSets_Test
     public async Task Frameset_31_AsyncParseRemotePDFAndRemoteTemplate()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
 
@@ -1814,7 +1814,7 @@ public class ParsingFrameSets_Test
     public async Task Frameset_32_AsyncParseRemotePDFAndMultipleRemoteTemplates()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
 
@@ -1930,7 +1930,7 @@ public class ParsingFrameSets_Test
     public async Task Frameset_33_AsyncParseRemotePDFAndDuplicateRemoteTemplates()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
 
@@ -2045,7 +2045,7 @@ public class ParsingFrameSets_Test
     public async Task Frameset_34_AsyncParseRemotePDFAndInlineTemplates()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
 
@@ -2161,7 +2161,7 @@ public class ParsingFrameSets_Test
     public async Task Frameset_35_AsyncParseMultipleInlineTemplatesAndRemotePDF()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
 
@@ -2297,7 +2297,7 @@ public class ParsingFrameSets_Test
     public async Task Frameset_36_AsyncParseDynamicInlineTemplatesAndRemotePDF()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplatePath = 
             "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/modifications/Scryber.UnitTest/Content/HTML/HelloWorld2Page.xhtml";
 
@@ -2416,7 +2416,7 @@ public class ParsingFrameSets_Test
     public void Frameset_40_ParseFrameWithSrcAndOverlayContent()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         
         var src = "<?scryber parser-mode='strict' ?>" +
                   "<html xmlns='http://www.w3.org/1999/xhtml'>" +
@@ -2525,7 +2525,7 @@ public class ParsingFrameSets_Test
     public void Frameset_41_ParseFrameWithSrc2PagesAndOverlayContent1Page()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         
         var src = "<?scryber parser-mode='strict' ?>" +
                   "<html xmlns='http://www.w3.org/1999/xhtml'>" +
@@ -2647,7 +2647,7 @@ public class ParsingFrameSets_Test
     public void Frameset_42_ParseFrameWithSrc3PagesAndOverlayContent1PageNotUsed()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         
         var src = "<?scryber parser-mode='strict' ?>" +
                   "<html xmlns='http://www.w3.org/1999/xhtml'>" +
@@ -2781,7 +2781,7 @@ public class ParsingFrameSets_Test
     public void Frameset_43_ParseFrameWithSrc4PagesAndOverlayContent2PageOnce()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         
         var src = "<?scryber parser-mode='strict' ?>" +
                   "<html xmlns='http://www.w3.org/1999/xhtml'>" +
@@ -2934,7 +2934,7 @@ public class ParsingFrameSets_Test
     public void Frameset_44_ParseFrameWithSrc4PagesAndOverlayContent2PageRepeat()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         
         var src = "<?scryber parser-mode='strict' ?>" +
                   "<html xmlns='http://www.w3.org/1999/xhtml'>" +
@@ -3089,7 +3089,7 @@ public class ParsingFrameSets_Test
     public void Frameset_45_ParseFrameWithSrc4PagesAndOverlayContent2PageFirst()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         
         var src = "<?scryber parser-mode='strict' ?>" +
                   "<html xmlns='http://www.w3.org/1999/xhtml'>" +
@@ -3239,7 +3239,7 @@ public class ParsingFrameSets_Test
     public void Frameset_46_ParseFrameWithSrc4PagesAndOverlayContent2PageLast()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         
         var src = "<?scryber parser-mode='strict' ?>" +
                   "<html xmlns='http://www.w3.org/1999/xhtml'>" +

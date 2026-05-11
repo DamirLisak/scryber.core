@@ -39,6 +39,8 @@ public class SVGImageDataViewBoxSizer : SVGImageDataSizer
         
     }
 
+    
+
     protected override Size DoGetLayoutSize()
     {
         var size = base.DoGetLayoutSize();
@@ -210,5 +212,12 @@ public class SVGImageDataViewBoxSizer : SVGImageDataSizer
 
         return scale;
         
+    }
+    
+    protected override PDFTransformationMatrix DoGetCanvasToImageMatrix(Size layoutSize, Point layoutOffset, ContextBase context)
+    {
+        // var matrix =  base.DoGetCanvasToImageMatrix(layoutSize, layoutOffset, context);
+        // return matrix;
+        return PDFTransformationMatrix.Identity();
     }
 }

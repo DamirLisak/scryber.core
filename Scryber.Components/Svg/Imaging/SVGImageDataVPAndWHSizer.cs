@@ -78,6 +78,8 @@ public class SVGImageDataVPAndWHSizer : SVGImageDataSizer
                 this.SVGHeight = this.ViewBox.Height * scale;
             }
         }
+        appliedStyle.Size.Width = this.SVGWidth;
+        appliedStyle.Size.Height = this.SVGHeight;
     }
 
     private Unit EnsureAbsolute(Unit value, Unit reference)
@@ -221,13 +223,19 @@ public class SVGImageDataVPAndWHSizer : SVGImageDataSizer
                 
             }
         }
-        var def =  base.DoGetRenderOffsetForContent(offset, available, context);
+
+        offset.Y += (newSize.Height - 1); //we push this down by 1 for the scale offset.
+        return offset;
         
-        return def;
+        //var def =  base.DoGetRenderOffsetForContent(offset, available, context);
+        //return def;
     }
 
     protected override PDFTransformationMatrix DoGetCanvasToImageMatrix(Size layoutSize, Point layoutOffset, ContextBase context)
     {
+        // var matrix =  base.DoGetCanvasToImageMatrix(layoutSize, layoutOffset, context);
+        // return matrix;
+        
         return PDFTransformationMatrix.Identity();
     }
 }

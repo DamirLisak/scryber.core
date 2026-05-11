@@ -216,56 +216,6 @@ public class SVGImageDataSizer
         
         return output;
     }
-
-    protected virtual Size DoGetLayoutSize2()
-    {
-        Unit width = SVGCanvas.DefaultWidth;
-        Unit height = SVGCanvas.DefaultHeight;
-
-        if (this.AppliedStyle.TryGetValue(StyleKeys.PositionViewPort, out var vp))
-        {
-            var rect = vp.Value(this.Canvas.Style);
-            width = rect.Width;
-            height = rect.Height;
-
-            if (this.AppliedStyle.TryGetValue(StyleKeys.SizeWidthKey, out var w))
-                width = w.Value(this.Canvas.Style);
-            if (this.AppliedStyle.TryGetValue(StyleKeys.SizeHeightKey, out var h))
-                height = h.Value(this.Canvas.Style);
-
-            if (width.IsRelative)
-            {
-                if (width.Units != PageUnits.Percent)
-                    throw new NotSupportedException(
-                        "A width can only be a relative percentage dimension on a discreet SVG image without a viewBox.");
-                
-                width = rect.Width * (width.Value / 100.0);
-            }
-
-            if (height.IsRelative)
-            {
-                if (height.Units != PageUnits.Percent)
-                    throw new NotSupportedException(
-                    "A height can only be a relative percentage dimension on a discreet SVG image without a viewBox.");
-                
-                height = rect.Height * (height.Value / 100.0);
-            }
-        }
-        else
-        {
-            if(this.AppliedStyle.TryGetValue(StyleKeys.SizeWidthKey, out var w))
-                width = w.Value(this.Canvas.Style);
-            if (this.AppliedStyle.TryGetValue(StyleKeys.SizeHeightKey, out var h))
-                height = h.Value(this.Canvas.Style);
-            
-            if(width.IsRelative)
-                throw new NotSupportedException("A width can only be a relative percentage dimension on a discreet SVG image without a viewBox.");
-            if(height.IsRelative)
-                throw new NotSupportedException("A height can only be a relative percentage dimension on a discreet SVG image without a viewBox.");
-
-        }
-        return new Size(width, height);
-    }
     
     protected virtual Point DoGetRenderOffsetForContent(Point offset, Size available, ContextBase context)
     {

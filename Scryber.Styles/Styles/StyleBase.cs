@@ -295,8 +295,6 @@ namespace Scryber.Styles
 
         #endregion
 
-        
-
         #region public void Clear()
 
         /// <summary>
@@ -308,6 +306,22 @@ namespace Scryber.Styles
             this.DoClear();
         }
 
+        #endregion
+        
+        #region public virtual string MapPath(string path)
+        
+        /// <summary>
+        /// Returns a resolved path to a resource.
+        /// </summary>
+        /// <param name="path">The path to resolve</param>
+        /// <returns>A qualified path to the resource, based on any known location.</returns>
+        /// <remarks>Base implementation simply returns the current provided path.
+        /// Inheritors can override this to add their own path mapping logic to resolve relative resource references.</remarks>
+        public virtual string MapPath(string path)
+        {
+            return path;
+        }
+        
         #endregion
 
         //
@@ -343,8 +357,6 @@ namespace Scryber.Styles
         }
 
         #endregion
-
-
         
         #region protected virtual void DoDataBind(PDFDataContext context, bool includechildren)
 
@@ -432,11 +444,6 @@ namespace Scryber.Styles
         }
 
         #endregion
-
-        public virtual string MapPath(string path)
-        {
-            return path;
-        }
 
         //
         // implementation
@@ -747,7 +754,7 @@ namespace Scryber.Styles
 
         #endregion
 
-        #region internal Scryber.Drawing.PDFThickness GetThickness(bool inherited, StyleKey all, StyleKey top, StyleKey left, StyleKey bottom, StyleKey right)
+        #region internal bool TryGetThickness(bool inherited, StyleKey all, StyleKey top, StyleKey left, StyleKey bottom, StyleKey right, out THickness thickness)
 
         /// <summary>
         /// Based on the provided style keys, builds a new PDFThickness with all values set and returns it.
@@ -1598,6 +1605,8 @@ namespace Scryber.Styles
 
         #endregion
 
+        #region protected internal virtual PDFPenBorders DoCreatePenBorders()
+        
         protected internal virtual PDFPenBorders DoCreatePenBorders()
         {
             StyleValue<LineType> baseLine;
@@ -1680,7 +1689,10 @@ namespace Scryber.Styles
             return full;
         }
 
-
+        
+        /// <summary>
+        /// Standard dash to use, if not explicitly set with a pattern or repeat.
+        /// </summary>
         private static Dash DefaultDash = new Dash(new int[] { 4 }, 0);
         private static Unit DefaultWidth = new Unit(1, PageUnits.Points);
 
@@ -1699,6 +1711,7 @@ namespace Scryber.Styles
         /// </summary>
         public static readonly Unit RepeatNaturalSize = 0;
 
+        
         internal protected virtual PDFPen DoCreateBorderSidePen(Sides side, StyleKey<Color> sideColor, StyleKey<Unit> sideWidth, StyleKey<LineType> sideLine, StyleKey<Dash> sideDash,
             StyleValue<Color> baseColor, StyleValue<Unit> baseWidth, StyleValue<LineType> baseLine, StyleValue<Dash> baseDash)
         {
@@ -1867,6 +1880,8 @@ namespace Scryber.Styles
 
             return pen;
         }
+        
+        #endregion
 
         #region internal protected virtual PDFPen DoCreateBorderPen()
 
@@ -1985,27 +2000,7 @@ namespace Scryber.Styles
 
 
         #endregion
-
-        private void ApplyBorderAttributes(PDFPen pen)
-        {
-            StyleValue<LineJoin> join;
-            StyleValue<LineCaps> caps;
-            StyleValue<float> mitre;
-            StyleValue<double> opacity;
-
-            if (this.TryGetValue(StyleKeys.BorderJoinKey, out join))
-                pen.LineJoin = join.Value(this);
-
-            if (this.TryGetValue(StyleKeys.BorderEndingKey, out caps))
-                pen.LineCaps = caps.Value(this);
-
-            if (this.TryGetValue(StyleKeys.BorderMitreKey, out mitre))
-                pen.MitreLimit = mitre.Value(this);
-
-            if (this.TryGetValue(StyleKeys.BorderOpacityKey, out opacity))
-                pen.Opacity = (Scryber.PDF.Native.PDFReal)opacity.Value(this);
-        }
-
+        
         #region internal protected virtual PDFPen DoCreateStrokePen()
 
         internal protected virtual PDFPen DoCreateStrokePen()
@@ -2160,26 +2155,6 @@ namespace Scryber.Styles
         }
 
         #endregion
-
-        private void ApplyStrokeAttributes(PDFPen pen)
-        {
-            StyleValue<LineJoin> join;
-            StyleValue<LineCaps> caps;
-            StyleValue<float> mitre;
-            StyleValue<double> opacity;
-
-            if (this.TryGetValue(StyleKeys.StrokeJoinKey, out join))
-                pen.LineJoin = join.Value(this);
-
-            if (this.TryGetValue(StyleKeys.StrokeEndingKey, out caps))
-                pen.LineCaps = caps.Value(this);
-
-            if (this.TryGetValue(StyleKeys.StrokeMitreKey, out mitre))
-                pen.MitreLimit = mitre.Value(this);
-
-            if (this.TryGetValue(StyleKeys.StrokeOpacityKey, out opacity))
-                pen.Opacity = (Scryber.PDF.Native.PDFReal)opacity.Value(this);
-        }
 
         #region internal protected virtual PDFBrush DoCreateBackgroundBrush()
 
@@ -2472,6 +2447,8 @@ namespace Scryber.Styles
 
         #endregion
 
+        #region internal protected virtual Thickness? DoCreateInlineMarginSize()
+        
         internal protected virtual Thickness? DoCreateInlineMarginSize()
         {
             Unit start;
@@ -2500,6 +2477,10 @@ namespace Scryber.Styles
                 return null;
             }
         }
+        
+        #endregion
+        
+        #region internal protected Thickness? DoCreateInlinePaddingSize()
         
         internal protected virtual Thickness? DoCreateInlinePaddingSize()
         {
@@ -2530,6 +2511,8 @@ namespace Scryber.Styles
                 return null;
             }
         }
+        
+        #endregion
 
         #region internal protected virtual PDFThickness DoCreateClippingThickness()
 
@@ -2572,6 +2555,58 @@ namespace Scryber.Styles
             return null;
         }
 
+        #endregion
+        
+        #region private void ApplyStrokeAttributes(PDFPen pen)
+        
+        /// <summary>
+        /// Sets each of the stroke options (join, ending, mitre-limit and opacity) to a pen from this style
+        /// </summary>
+        /// <param name="pen"></param>
+        private void ApplyStrokeAttributes(PDFPen pen)
+        {
+            StyleValue<LineJoin> join;
+            StyleValue<LineCaps> caps;
+            StyleValue<float> mitre;
+            StyleValue<double> opacity;
+
+            if (this.TryGetValue(StyleKeys.StrokeJoinKey, out join))
+                pen.LineJoin = join.Value(this);
+
+            if (this.TryGetValue(StyleKeys.StrokeEndingKey, out caps))
+                pen.LineCaps = caps.Value(this);
+
+            if (this.TryGetValue(StyleKeys.StrokeMitreKey, out mitre))
+                pen.MitreLimit = mitre.Value(this);
+
+            if (this.TryGetValue(StyleKeys.StrokeOpacityKey, out opacity))
+                pen.Opacity = (Scryber.PDF.Native.PDFReal)opacity.Value(this);
+        }
+        
+        #endregion
+        
+        #region private void ApplyBorderAttributes(PDFPen pen)
+        
+        private void ApplyBorderAttributes(PDFPen pen)
+        {
+            StyleValue<LineJoin> join;
+            StyleValue<LineCaps> caps;
+            StyleValue<float> mitre;
+            StyleValue<double> opacity;
+
+            if (this.TryGetValue(StyleKeys.BorderJoinKey, out join))
+                pen.LineJoin = join.Value(this);
+
+            if (this.TryGetValue(StyleKeys.BorderEndingKey, out caps))
+                pen.LineCaps = caps.Value(this);
+
+            if (this.TryGetValue(StyleKeys.BorderMitreKey, out mitre))
+                pen.MitreLimit = mitre.Value(this);
+
+            if (this.TryGetValue(StyleKeys.BorderOpacityKey, out opacity))
+                pen.Opacity = (Scryber.PDF.Native.PDFReal)opacity.Value(this);
+        }
+        
         #endregion
     }
 

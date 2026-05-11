@@ -2473,7 +2473,7 @@ namespace Scryber.PDF.Layout
                     
                     var imgSz = tolayout.GetRequiredSizeForLayout(avail, this.Context, style);
 
-                    if (imgSz.Width > sz.Width || imgSz.Height > sz.Height)
+                    if (imgSz.Width > avail.Width || imgSz.Height > avail.Height)
                     {
                         if (data.AllowLayoutOverflow)
                         {

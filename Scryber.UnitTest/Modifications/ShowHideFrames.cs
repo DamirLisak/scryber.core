@@ -25,7 +25,7 @@ public class ShowHideFrames
     public void Frameset_40_ParseThreeFramesOneHidden()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplateContent = "<html id='inner'>\n" +
                                              "<head>\n    " +
                                              "<title>{@:title}</title>\n" +
@@ -182,7 +182,7 @@ public class ShowHideFrames
     public void Frameset_41_ParseThreeFramesTwoHidden()
     {
         const string ExpressionsPDFPath =
-            "https://raw.githubusercontent.com/richard-scryber/scryber.core/refs/heads/master/docs/images/Crib%20Sheet%20-%20Expressions.pdf";
+            "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/PDFs/Crib%20Sheet%20-%20Expressions.pdf";
         const string TemplateContent = "<html id='inner'>\n" +
                                              "<head>\n    " +
                                              "<title>{@:title}</title>\n" +

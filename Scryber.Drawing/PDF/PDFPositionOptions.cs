@@ -59,6 +59,11 @@ namespace Scryber.PDF
             get { return _vis; }
             set { _vis = value; }
         }
+        
+        /// <summary>
+        /// Gets or sets the z-index (render order) for a component
+        /// </summary>
+        public int ZIndex { get; set; }
 
         /// <summary>
         /// Gets or sets the X (horizontal) offset

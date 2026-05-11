@@ -627,7 +627,7 @@ namespace Scryber.Core.UnitTests.Html
         public void ImageSizeJpegFixedWidthWithContent_Test()
         {
             var project = GetLocalProjectPath();
-            var path = "https://raw.githubusercontent.com/richard-scryber/scryber.core/master/docs/images/ScyberLogo2_alpha_small.png";
+            var path = "https://raw.githubusercontent.com/richard-scryber/scryber.core/21e754878742d040249ed5da34612b1e535f031f/Scryber.UnitTest/Content/HTML/Images/ScyberLogo2_alpha_small.png";
             var width = new Unit(40, PageUnits.Points);
             var html = @"<?scryber append-log='true' ?>
 <html xmlns='http://www.w3.org/1999/xhtml' >

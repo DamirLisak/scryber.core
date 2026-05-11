@@ -101,8 +101,30 @@ public class SVGImageDataOnlyWHSizer : SVGImageDataSizer
 
                 if (!hasHeight && SVGHeight.HasValue)
                     height = SVGHeight.Value;
+
+                // if (width > available.Width)
+                // {
+                //     var scale = available.Width.PointsValue / width.PointsValue;
+                //     width = available.Width;
+                //     height = available.Height.PointsValue  * scale;
+                //     
+                // }
             }
 
+            return new Size(width, height);
+        }
+        else if (width > available.Width)
+        {
+            var scale = available.Width.PointsValue / width.PointsValue;
+            width = available.Width;
+
+            if (SVGHeight.HasValue)
+            {
+                height = SVGHeight.Value.PointsValue * scale;
+            }
+            else
+                height = height.PointsValue * scale;
+            
             return new Size(width, height);
         }
         

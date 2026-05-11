@@ -28,6 +28,7 @@ namespace Scryber.Html.Components
             style.Margins.Bottom = new Unit(1, PageUnits.EMHeight);
             style.Margins.Left = new Unit(40, PageUnits.Points);
             style.Margins.Right = new Unit(40, PageUnits.Points);
+            style.Overflow.Split = OverflowSplit.Never;
             return style;
         }
     }
