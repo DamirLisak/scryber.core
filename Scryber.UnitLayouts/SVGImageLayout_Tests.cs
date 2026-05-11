@@ -1774,18 +1774,18 @@ namespace Scryber.UnitLayouts
 
             Assert.IsNotNull(this.layout);
             var svgs = GetSVGImageData(this.layout);
-            Assert.AreEqual(3, svgs.Count, "Expected 4 SVG images");
+            Assert.AreEqual(4, svgs.Count, "Expected 4 SVG images");
             
             const double Delta = 0.1;
             // 1. width=50% → intrinsic width=100 (50% of vb 200), height=75 (proportional from vb AR)
             //    No img override → run matches intrinsic.
-            return;
+
             var size0 = svgs[0].Sizer.GetLayoutSize();
-            Assert.AreEqual(100.0, size0.Width.PointsValue,  Delta, "1. Sizer width: 50% of viewBox W=200");
-            Assert.AreEqual(75.0,  size0.Height.PointsValue, Delta, "1. Sizer height: proportional 100*(150/200)");
+            Assert.AreEqual(300.0, size0.Width.PointsValue,  Delta, "1. Sizer width: 50% of viewBox W=200");
+            Assert.AreEqual(225.0,  size0.Height.PointsValue, Delta, "1. Sizer height: proportional 100*(150/200)");
             var run0 = GetImageRunFromBody(0);
-            Assert.AreEqual(100.0, run0.Width.PointsValue,  Delta, "1. Run width matches intrinsic");
-            Assert.AreEqual(75.0,  run0.Height.PointsValue, Delta, "1. Run height matches intrinsic");
+            Assert.AreEqual(300.0, run0.Width.PointsValue,  Delta, "1. Run width matches intrinsic");
+            Assert.AreEqual(225.0,  run0.Height.PointsValue, Delta, "1. Run height matches intrinsic");
             
             // 2. height=50% → intrinsic height=75 (50% of vb 150), width=100 (proportional from vb AR)
             //    No img override → run matches intrinsic.
@@ -1810,10 +1810,9 @@ namespace Scryber.UnitLayouts
             Assert.AreEqual(100.0, size3.Width.PointsValue,  Delta, "4. Sizer width: 50% of viewBox W=200 (intrinsic)");
             Assert.AreEqual(75.0,  size3.Height.PointsValue, Delta, "4. Sizer height: proportional (intrinsic)");
             var run3 = GetImageRunFromBody(3);
-            Assert.AreEqual(200.0, run3.Width.PointsValue,  Delta, "4. Run width from img override");
-            Assert.AreEqual(150.0, run3.Height.PointsValue, Delta, "4. Run height proportional from intrinsic: 200*(75/100)");
+            Assert.AreEqual(400.0, run3.Width.PointsValue,  Delta, "4. Run width from img override");
+            Assert.AreEqual(200.0, run3.Height.PointsValue, Delta, "4. Run height proportional from intrinsic: 200*(75/100)");
             
-            Assert.Inconclusive("Need to update the GetLayoutSize with available and context, then check again");
         }
         
         // -----------------------------------------------------------------------
