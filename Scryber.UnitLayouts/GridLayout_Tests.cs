@@ -676,6 +676,141 @@ namespace Scryber.UnitLayouts
         // ======================================================================
 
         // ======================================================================
+        // grid-auto-flow: column — column-major item placement
+        // ======================================================================
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void Grid_AutoFlow_Column_SixItems_ThreeColumns()
+        {
+            // With grid-auto-flow: column, items fill top-to-bottom then next column.
+            // 6 items in 3 columns → 2 rows; placement:
+            //   col0    col1    col2
+            //  [Item0] [Item2] [Item4]
+            //  [Item1] [Item3] [Item5]
+            var doc  = CreateDoc(out var pg);
+            var grid = CreateGrid(pg, "1fr 1fr 1fr");
+            grid.Style.Grid.AutoFlow = GridAutoFlow.Column;
+
+            AddItem(grid, "Item0", height: 40);
+            AddItem(grid, "Item1", height: 40);
+            AddItem(grid, "Item2", height: 40);
+            AddItem(grid, "Item3", height: 40);
+            AddItem(grid, "Item4", height: 40);
+            AddItem(grid, "Item5", height: 40);
+
+            using (var ms = DocStreams.GetOutputStream("Grid_AutoFlow_Column_6x3.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(_layout);
+            var gridBlock = GetGridBlock(_layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(gridBlock);
+
+            Assert.AreEqual(2, gridBlock.Columns[0].Contents.Count,
+                "6 items in 3-col column-flow grid should produce 2 rows");
+
+            var row0 = GetRowBlock(gridBlock, 0);
+            var row1 = GetRowBlock(gridBlock, 1);
+            Assert.AreEqual(3, row0.Columns.Length, "Row 0 should have 3 columns");
+            Assert.AreEqual(3, row1.Columns.Length, "Row 1 should have 3 columns");
+
+            // Column-major order: col0=Items 0,1  col1=Items 2,3  col2=Items 4,5
+            StringAssert.Contains(CollectText(row0.Columns[0]), "Item0", "Row0 Col0 = Item0");
+            StringAssert.Contains(CollectText(row1.Columns[0]), "Item1", "Row1 Col0 = Item1");
+            StringAssert.Contains(CollectText(row0.Columns[1]), "Item2", "Row0 Col1 = Item2");
+            StringAssert.Contains(CollectText(row1.Columns[1]), "Item3", "Row1 Col1 = Item3");
+            StringAssert.Contains(CollectText(row0.Columns[2]), "Item4", "Row0 Col2 = Item4");
+            StringAssert.Contains(CollectText(row1.Columns[2]), "Item5", "Row1 Col2 = Item5");
+        }
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void Grid_AutoFlow_Column_OddItemCount()
+        {
+            // 5 items in 2 columns, column flow:
+            //   col0    col1
+            //  [Item0] [Item3]
+            //  [Item1] [Item4]
+            //  [Item2]  (empty)
+            var doc  = CreateDoc(out var pg);
+            var grid = CreateGrid(pg, "1fr 1fr");
+            grid.Style.Grid.AutoFlow = GridAutoFlow.Column;
+
+            AddItem(grid, "Item0", height: 30);
+            AddItem(grid, "Item1", height: 30);
+            AddItem(grid, "Item2", height: 30);
+            AddItem(grid, "Item3", height: 30);
+            AddItem(grid, "Item4", height: 30);
+
+            using (var ms = DocStreams.GetOutputStream("Grid_AutoFlow_Column_5x2.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(_layout);
+            var gridBlock = GetGridBlock(_layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(gridBlock);
+
+            // 5 items, 2 cols → ceil(5/2) = 3 rows
+            Assert.AreEqual(3, gridBlock.Columns[0].Contents.Count,
+                "5 items in 2-col column-flow grid should produce 3 rows");
+
+            var row0 = GetRowBlock(gridBlock, 0);
+            var row1 = GetRowBlock(gridBlock, 1);
+            var row2 = GetRowBlock(gridBlock, 2);
+
+            StringAssert.Contains(CollectText(row0.Columns[0]), "Item0");
+            StringAssert.Contains(CollectText(row1.Columns[0]), "Item1");
+            StringAssert.Contains(CollectText(row2.Columns[0]), "Item2");
+            StringAssert.Contains(CollectText(row0.Columns[1]), "Item3");
+            StringAssert.Contains(CollectText(row1.Columns[1]), "Item4");
+        }
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void Grid_AutoFlow_Column_CSSParsed()
+        {
+            // Verify grid-auto-flow: column parsed from inline CSS string.
+            const string src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<body style=""margin:0;padding:0;"">
+  <div style=""display:grid;width:600pt;grid-template-columns:1fr 1fr;grid-auto-flow:column;"">
+    <div style=""height:40pt;"">A</div>
+    <div style=""height:40pt;"">B</div>
+    <div style=""height:40pt;"">C</div>
+    <div style=""height:40pt;"">D</div>
+  </div>
+</body>
+</html>";
+
+            using var doc = Document.Parse(new System.IO.StringReader(src),
+                                           ParseSourceType.DynamicContent) as Document;
+            using (var ms = DocStreams.GetOutputStream("Grid_AutoFlow_Column_CSS.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(_layout);
+            var gridBlock = GetGridBlock(_layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(gridBlock, "Grid block must exist");
+
+            // 4 items, 2 cols, column flow → 2 rows
+            Assert.AreEqual(2, gridBlock.Columns[0].Contents.Count,
+                "4 items in 2-col column-flow grid should produce 2 rows");
+
+            var row0 = GetRowBlock(gridBlock, 0);
+            var row1 = GetRowBlock(gridBlock, 1);
+
+            // Column-major: A,B in col0; C,D in col1
+            StringAssert.Contains(CollectText(row0.Columns[0]), "A", "Row0 Col0 = A");
+            StringAssert.Contains(CollectText(row1.Columns[0]), "B", "Row1 Col0 = B");
+            StringAssert.Contains(CollectText(row0.Columns[1]), "C", "Row0 Col1 = C");
+            StringAssert.Contains(CollectText(row1.Columns[1]), "D", "Row1 Col1 = D");
+        }
+
+        // ======================================================================
         // grid-template-rows — explicit row sizing
         // ======================================================================
 

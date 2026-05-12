@@ -369,6 +369,12 @@ namespace Scryber.Drawing
         SpaceEvenly = 8
     }
 
+    public enum GridAutoFlow
+    {
+        Row    = 0,
+        Column = 1
+    }
+
     public enum FloatMode
     {
         /// <summary>

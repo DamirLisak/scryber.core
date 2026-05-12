@@ -182,25 +182,69 @@ namespace Scryber.PDF.Layout
             if (items.Count == 0)
                 return grid;
 
-            // Group into rows of colCount (auto-flow, row-major)
+            var autoFlow = (source is IStyledComponent sc2 && sc2.HasStyle)
+                ? sc2.Style.GetValue(StyleKeys.GridAutoFlowKey, GridAutoFlow.Row)
+                : GridAutoFlow.Row;
+
+            if (autoFlow == GridAutoFlow.Column)
+                BuildColumnMajor(items, colCount, grid, cellGrid, syntheticRows);
+            else
+                BuildRowMajor(items, colCount, grid, cellGrid, syntheticRows);
+
+            return grid;
+        }
+
+        private static void BuildRowMajor(
+            List<Component> items, int colCount,
+            TableGrid grid, List<List<GridCell>> cellGrid, List<TableRow> syntheticRows)
+        {
             for (int i = 0; i < items.Count; i += colCount)
             {
                 var row = new TableRow();
                 var rowCells = new List<GridCell>();
-
                 for (int j = 0; j < colCount && (i + j) < items.Count; j++)
                 {
                     var cell = new GridCell(items[i + j]);
                     row.Cells.Add(cell);
                     rowCells.Add(cell);
                 }
-
                 grid.Rows.Add(row);
                 cellGrid.Add(rowCells);
                 syntheticRows.Add(row);
             }
+        }
 
-            return grid;
+        private static void BuildColumnMajor(
+            List<Component> items, int colCount,
+            TableGrid grid, List<List<GridCell>> cellGrid, List<TableRow> syntheticRows)
+        {
+            // rows = ceil(itemCount / colCount)
+            int rowCount = (items.Count + colCount - 1) / colCount;
+
+            // Pre-build rows and cell lists
+            var rows = new TableRow[rowCount];
+            var rowCells = new List<GridCell>[rowCount];
+            for (int r = 0; r < rowCount; r++)
+            {
+                rows[r] = new TableRow();
+                rowCells[r] = new List<GridCell>();
+            }
+
+            // Place items column-by-column: item i → col = i/rowCount, row = i%rowCount
+            for (int i = 0; i < items.Count; i++)
+            {
+                int row = i % rowCount;
+                var cell = new GridCell(items[i]);
+                rows[row].Cells.Add(cell);
+                rowCells[row].Add(cell);
+            }
+
+            for (int r = 0; r < rowCount; r++)
+            {
+                grid.Rows.Add(rows[r]);
+                cellGrid.Add(rowCells[r]);
+                syntheticRows.Add(rows[r]);
+            }
         }
 
         // -----------------------------------------------------------------------

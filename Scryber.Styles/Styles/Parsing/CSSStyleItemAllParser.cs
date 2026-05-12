@@ -319,6 +319,7 @@ namespace Scryber.Styles.Parsing
 
             all.Add(CSSStyleItems.GridTemplateColumns, new Typed.CSSGridTemplateColumnsParser());
             all.Add(CSSStyleItems.GridTemplateRows, new Typed.CSSGridTemplateRowsParser());
+            all.Add(CSSStyleItems.GridAutoFlow, new Typed.CSSGridAutoFlowParser());
 
             _allknown = new ReadOnlyDictionary<string, IParserStyleFactory>(all);
         }

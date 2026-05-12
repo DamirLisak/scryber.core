@@ -197,6 +197,7 @@ namespace Scryber.Html
 
         public const string GridTemplateColumns = "grid-template-columns";
         public const string GridTemplateRows = "grid-template-rows";
+        public const string GridAutoFlow = "grid-auto-flow";
     }
 }
 

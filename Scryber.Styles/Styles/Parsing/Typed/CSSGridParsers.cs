@@ -1,3 +1,4 @@
+using Scryber.Drawing;
 using Scryber.Html;
 
 namespace Scryber.Styles.Parsing.Typed
@@ -21,6 +22,28 @@ namespace Scryber.Styles.Parsing.Typed
                 return false;
 
             this.SetValue(onStyle, raw);
+            return true;
+        }
+    }
+
+    /// <summary>Parses grid-auto-flow: row | column.</summary>
+    public class CSSGridAutoFlowParser : CSSStyleAttributeParser<GridAutoFlow>
+    {
+        public CSSGridAutoFlowParser() : base(CSSStyleItems.GridAutoFlow, StyleKeys.GridAutoFlowKey) { }
+
+        protected override bool DoSetStyleValue(Style onStyle, CSSStyleItemReader reader)
+        {
+            if (!reader.ReadNextValue())
+                return false;
+
+            GridAutoFlow flow;
+            switch (reader.CurrentTextValue.ToLowerInvariant())
+            {
+                case "column": flow = GridAutoFlow.Column; break;
+                case "row":    flow = GridAutoFlow.Row;    break;
+                default:       return false;
+            }
+            this.SetValue(onStyle, flow);
             return true;
         }
     }

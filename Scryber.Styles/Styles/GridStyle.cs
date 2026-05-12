@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Scryber.Drawing;
 
 namespace Scryber.Styles
 {
@@ -41,5 +42,13 @@ namespace Scryber.Styles
         }
 
         public void RemoveRowSpan() { this.RemoveValue(StyleKeys.GridRowSpanKey); }
+
+        public GridAutoFlow AutoFlow
+        {
+            get { GridAutoFlow v; return this.TryGetValue(StyleKeys.GridAutoFlowKey, out v) ? v : GridAutoFlow.Row; }
+            set { this.SetValue(StyleKeys.GridAutoFlowKey, value); }
+        }
+
+        public void RemoveAutoFlow() { this.RemoveValue(StyleKeys.GridAutoFlowKey); }
     }
 }
