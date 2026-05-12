@@ -224,7 +224,7 @@ public class SVGImageDataVPAndWHSizer : SVGImageDataSizer
             }
         }
 
-        offset.Y += (newSize.Height - 1); //we push this down by 1 for the scale offset.
+        offset.Y += newSize.Height;
         return offset;
         
         //var def =  base.DoGetRenderOffsetForContent(offset, available, context);
