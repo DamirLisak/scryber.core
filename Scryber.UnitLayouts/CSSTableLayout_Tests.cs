@@ -361,6 +361,79 @@ namespace Scryber.UnitLayouts
         }
 
         // -----------------------------------------------------------------------
+        // Regression: existing <table> element is unaffected by LayoutEngineCSSTable
+        // -----------------------------------------------------------------------
+
+        [TestCategory(TestCategory)]
+        [TestMethod()]
+        public void CSSTable_ExistingTableElement_Unaffected()
+        {
+            // A real HTML <table> must still be laid out by the normal table engine,
+            // not by LayoutEngineCSSTable. Place both a native table and a CSS table
+            // on the same page and verify the native table produces the expected result.
+            var src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<body style=""margin:0; padding:0;"">
+  <table style=""width:600pt;"">
+    <tr>
+      <td style=""height:50pt; padding:4pt;"">Native A</td>
+      <td style=""height:50pt; padding:4pt;"">Native B</td>
+    </tr>
+  </table>
+  <div style=""display:table; width:600pt;"">
+    <div style=""display:table-row;"">
+      <div style=""display:table-cell; height:50pt; padding:4pt;"">CSS A</div>
+      <div style=""display:table-cell; height:50pt; padding:4pt;"">CSS B</div>
+    </div>
+  </div>
+</body>
+</html>";
+
+            using var doc = Document.Parse(new System.IO.StringReader(src),
+                                           ParseSourceType.DynamicContent) as Document;
+            Assert.IsNotNull(doc);
+
+            PDFLayoutDocument layout = null;
+            using (var ms = DocStreams.GetOutputStream("CSSTable_NativeTableUnaffected.pdf"))
+            {
+                doc.LayoutComplete += (s, e) => layout = e.Context.GetLayout<PDFLayoutDocument>();
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(layout);
+            Assert.AreEqual(1, layout.AllPages.Count, "Should produce exactly one page");
+
+            // Find all row blocks that have exactly 2 columns — both the native table and the
+            // CSS table should each contribute one such block.
+            var pageRegion = layout.AllPages[0].ContentBlock.Columns[0];
+            int twoColRowCount = CountBlocksWithCols(pageRegion, 2);
+            Assert.IsTrue(twoColRowCount >= 2,
+                "Should have at least 2 row blocks with 2 columns (one native, one CSS)");
+
+            // Collect all text on the page and confirm both tables rendered their content.
+            var allText = CollectText(pageRegion);
+            StringAssert.Contains(allText, "Native A", "Native table cell A should be present");
+            StringAssert.Contains(allText, "Native B", "Native table cell B should be present");
+            StringAssert.Contains(allText, "CSS A",    "CSS table cell A should be present");
+            StringAssert.Contains(allText, "CSS B",    "CSS table cell B should be present");
+        }
+
+        private static int CountBlocksWithCols(PDFLayoutRegion region, int colCount)
+        {
+            int count = 0;
+            foreach (var item in region.Contents)
+            {
+                if (item is PDFLayoutBlock b)
+                {
+                    if (b.Columns.Length == colCount) count++;
+                    foreach (var col in b.Columns)
+                        count += CountBlocksWithCols(col, colCount);
+                }
+            }
+            return count;
+        }
+
+        // -----------------------------------------------------------------------
         // Empty CSS table does not throw
         // -----------------------------------------------------------------------
 
