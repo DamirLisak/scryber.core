@@ -110,6 +110,11 @@ namespace Scryber.PDF.Layout
 
             protected override ComponentList InnerContent
                 => _source != null ? ((IContainerComponent)_source).Content : base.InnerContent;
+
+            // Delegate style resolution to the source panel so that CSS rules applied to it
+            // (padding, border, background, etc.) are visible to the table layout engine.
+            public override Style GetAppliedStyle()
+                => _source?.GetAppliedStyle() ?? base.GetAppliedStyle();
         }
     }
 }
