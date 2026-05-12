@@ -775,11 +775,11 @@ namespace Scryber.UnitLayouts
             const string src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <html xmlns=""http://www.w3.org/1999/xhtml"">
 <body style=""margin:0;padding:0;"">
-  <div style=""display:grid;width:600pt;grid-template-columns:1fr 1fr;grid-auto-flow:column;"">
-    <div style=""height:40pt;"">A</div>
-    <div style=""height:40pt;"">B</div>
-    <div style=""height:40pt;"">C</div>
-    <div style=""height:40pt;"">D</div>
+  <div style=""display:grid;width:600pt;grid-template-columns:1fr 1fr;grid-auto-flow:column;border:1pt solid #000000;"">
+    <div style=""height:40pt;padding:4pt;border:1pt solid #646464;background-color:#D0E8FF;"">A</div>
+    <div style=""height:40pt;padding:4pt;border:1pt solid #646464;background-color:#FFE8D0;"">B</div>
+    <div style=""height:40pt;padding:4pt;border:1pt solid #646464;background-color:#D0FFE8;"">C</div>
+    <div style=""height:40pt;padding:4pt;border:1pt solid #646464;background-color:#FFD0E8;"">D</div>
   </div>
 </body>
 </html>";
@@ -892,11 +892,11 @@ namespace Scryber.UnitLayouts
             const string src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <html xmlns=""http://www.w3.org/1999/xhtml"">
 <body style=""margin:0;padding:0;"">
-  <div style=""display:grid;width:600pt;grid-template-columns:1fr 1fr;grid-template-rows:120pt 60pt;"">
-    <div style=""height:10pt;"">A</div>
-    <div style=""height:10pt;"">B</div>
-    <div style=""height:10pt;"">C</div>
-    <div style=""height:10pt;"">D</div>
+  <div style=""display:grid;width:600pt;grid-template-columns:1fr 1fr;grid-template-rows:120pt 60pt;border:1pt solid #000000;"">
+    <div style=""height:10pt;padding:4pt;border:1pt solid #646464;background-color:#D0E8FF;"">A</div>
+    <div style=""height:10pt;padding:4pt;border:1pt solid #646464;background-color:#FFE8D0;"">B</div>
+    <div style=""height:10pt;padding:4pt;border:1pt solid #646464;background-color:#D0FFE8;"">C</div>
+    <div style=""height:10pt;padding:4pt;border:1pt solid #646464;background-color:#FFD0E8;"">D</div>
   </div>
 </body>
 </html>";

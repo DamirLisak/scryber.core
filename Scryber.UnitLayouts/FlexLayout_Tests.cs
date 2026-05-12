@@ -652,9 +652,9 @@ namespace Scryber.UnitLayouts
             var src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <html xmlns=""http://www.w3.org/1999/xhtml"">
 <body style=""margin:0; padding:0;"">
-  <div style=""display:flex; align-items:center; width:600pt;"">
-    <div style=""height:50pt; flex-grow:1; padding:4pt;"">Short</div>
-    <div style=""height:80pt; flex-grow:1; padding:4pt;"">Tall</div>
+  <div style=""display:flex; align-items:center; width:600pt; border:1pt solid #000000;"">
+    <div style=""height:50pt; flex-grow:1; padding:4pt; border:1pt solid #646464; background-color:#D0E8FF;"">Short</div>
+    <div style=""height:80pt; flex-grow:1; padding:4pt; border:1pt solid #646464; background-color:#FFE8D0;"">Tall</div>
   </div>
 </body>
 </html>";
@@ -700,9 +700,9 @@ namespace Scryber.UnitLayouts
             var src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <html xmlns=""http://www.w3.org/1999/xhtml"">
 <body style=""margin:0; padding:0;"">
-  <div style=""display:flex; justify-content:flex-start; width:600pt;"">
-    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">A</div>
-    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">B</div>
+  <div style=""display:flex; justify-content:flex-start; width:600pt; border:1pt solid #000000;"">
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#D0E8FF;"">A</div>
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#FFE8D0;"">B</div>
   </div>
 </body>
 </html>";
@@ -735,9 +735,9 @@ namespace Scryber.UnitLayouts
             var src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <html xmlns=""http://www.w3.org/1999/xhtml"">
 <body style=""margin:0; padding:0;"">
-  <div style=""display:flex; justify-content:flex-end; width:600pt;"">
-    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">A</div>
-    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">B</div>
+  <div style=""display:flex; justify-content:flex-end; width:600pt; border:1pt solid #000000;"">
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#D0E8FF;"">A</div>
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#FFE8D0;"">B</div>
   </div>
 </body>
 </html>";
@@ -770,9 +770,9 @@ namespace Scryber.UnitLayouts
             var src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <html xmlns=""http://www.w3.org/1999/xhtml"">
 <body style=""margin:0; padding:0;"">
-  <div style=""display:flex; justify-content:center; width:600pt;"">
-    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">A</div>
-    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">B</div>
+  <div style=""display:flex; justify-content:center; width:600pt; border:1pt solid #000000;"">
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#D0E8FF;"">A</div>
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#FFE8D0;"">B</div>
   </div>
 </body>
 </html>";
@@ -806,9 +806,9 @@ namespace Scryber.UnitLayouts
             var src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <html xmlns=""http://www.w3.org/1999/xhtml"">
 <body style=""margin:0; padding:0;"">
-  <div style=""display:flex; justify-content:space-between; width:600pt;"">
-    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">A</div>
-    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">B</div>
+  <div style=""display:flex; justify-content:space-between; width:600pt; border:1pt solid #000000;"">
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#D0E8FF;"">A</div>
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#FFE8D0;"">B</div>
   </div>
 </body>
 </html>";
