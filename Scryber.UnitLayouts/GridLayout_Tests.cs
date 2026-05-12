@@ -52,7 +52,8 @@ namespace Scryber.UnitLayouts
         /// <summary>Creates a display:grid panel with a visible outer border.</summary>
         private static Panel CreateGrid(Page pg, string templateColumns,
                                         double width = PageW,
-                                        double padding = 0, double margin = 0)
+                                        double padding = 0, double margin = 0,
+                                        string templateRows = null)
         {
             var panel = new Panel();
             panel.Style.Position.DisplayMode  = DisplayMode.FlexGrid;
@@ -64,6 +65,7 @@ namespace Scryber.UnitLayouts
             panel.Style.Border.Color     = new Color(0, 0, 0);
             if (padding > 0) panel.Style.Padding.All = padding;
             if (margin  > 0) panel.Style.Margins.All = margin;
+            if (templateRows != null) panel.Style.Grid.TemplateRows = templateRows;
             pg.Contents.Add(panel);
             return panel;
         }
@@ -671,6 +673,121 @@ namespace Scryber.UnitLayouts
 
         // ======================================================================
         // 12. Empty grid — must not throw
+        // ======================================================================
+
+        // ======================================================================
+        // grid-template-rows — explicit row sizing
+        // ======================================================================
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void Grid_TemplateRows_TwoFixedRows()
+        {
+            // grid-template-rows: 100pt 50pt should force row heights regardless of item content.
+            var doc  = CreateDoc(out var pg);
+            var grid = CreateGrid(pg, "1fr 1fr", templateRows: "100pt 50pt");
+
+            // 4 short items — content alone would produce ~20pt rows, not 100/50
+            AddItem(grid, "R0C0", height: 10);
+            AddItem(grid, "R0C1", height: 10);
+            AddItem(grid, "R1C0", height: 10);
+            AddItem(grid, "R1C1", height: 10);
+
+            using (var ms = DocStreams.GetOutputStream("Grid_TemplateRows_TwoFixed.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(_layout);
+            var gridBlock = GetGridBlock(_layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(gridBlock, "Grid block must exist");
+            Assert.AreEqual(2, gridBlock.Columns[0].Contents.Count, "Grid should have 2 rows");
+
+            var row0 = GetRowBlock(gridBlock, 0);
+            var row1 = GetRowBlock(gridBlock, 1);
+
+            Assert.AreEqual(100.0, row0.TotalBounds.Height.PointsValue, 2.0,
+                "Row 0 should be 100pt (from grid-template-rows)");
+            Assert.AreEqual(50.0, row1.TotalBounds.Height.PointsValue, 2.0,
+                "Row 1 should be 50pt (from grid-template-rows)");
+
+            // Row 1 Y should be ~100pt below row 0
+            Assert.IsTrue(row1.TotalBounds.Y.PointsValue >= row0.TotalBounds.Y.PointsValue + 90.0,
+                "Row 1 should start after row 0");
+        }
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void Grid_TemplateRows_TemplateHeightApplied_WhenItemSmaller()
+        {
+            // When items are shorter than the template row height the template height wins.
+            // (CSS grid: fixed track sizes do not shrink to content.)
+            var doc  = CreateDoc(out var pg);
+            var grid = CreateGrid(pg, "1fr 1fr", templateRows: "80pt 40pt");
+
+            // Items shorter than the row definitions
+            AddItem(grid, "R0C0", height: 10);
+            AddItem(grid, "R0C1", height: 10);
+            AddItem(grid, "R1C0", height: 10);
+            AddItem(grid, "R1C1", height: 10);
+
+            using (var ms = DocStreams.GetOutputStream("Grid_TemplateRows_ItemSmaller.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(_layout);
+            var gridBlock = GetGridBlock(_layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(gridBlock);
+            Assert.AreEqual(2, gridBlock.Columns[0].Contents.Count);
+
+            var row0 = GetRowBlock(gridBlock, 0);
+            var row1 = GetRowBlock(gridBlock, 1);
+
+            Assert.AreEqual(80.0, row0.TotalBounds.Height.PointsValue, 2.0,
+                "Row 0 should be 80pt (template wins over 10pt item)");
+            Assert.AreEqual(40.0, row1.TotalBounds.Height.PointsValue, 2.0,
+                "Row 1 should be 40pt (template wins over 10pt item)");
+        }
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void Grid_TemplateRows_CSSParsed()
+        {
+            // Verify grid-template-rows parsed from an inline CSS string drives row heights.
+            const string src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<body style=""margin:0;padding:0;"">
+  <div style=""display:grid;width:600pt;grid-template-columns:1fr 1fr;grid-template-rows:120pt 60pt;"">
+    <div style=""height:10pt;"">A</div>
+    <div style=""height:10pt;"">B</div>
+    <div style=""height:10pt;"">C</div>
+    <div style=""height:10pt;"">D</div>
+  </div>
+</body>
+</html>";
+
+            using var doc = Document.Parse(new System.IO.StringReader(src),
+                                           ParseSourceType.DynamicContent) as Document;
+            using (var ms = DocStreams.GetOutputStream("Grid_TemplateRows_CSS.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(_layout);
+            var pageRegion = _layout.AllPages[0].ContentBlock.Columns[0];
+            var gridBlock  = GetGridBlock(pageRegion);
+            Assert.IsNotNull(gridBlock, "Grid block must exist");
+
+            var row0 = GetRowBlock(gridBlock, 0);
+            var row1 = GetRowBlock(gridBlock, 1);
+
+            Assert.AreEqual(120.0, row0.TotalBounds.Height.PointsValue, 2.0,
+                "Row 0 should be 120pt from CSS grid-template-rows");
+            Assert.AreEqual(60.0, row1.TotalBounds.Height.PointsValue, 2.0,
+                "Row 1 should be 60pt from CSS grid-template-rows");
+        }
+
         // ======================================================================
 
         [TestCategory(TestCategory), TestMethod()]

@@ -879,7 +879,7 @@ namespace Scryber.Components
 
 
 
-            if (modified)
+            if (modified && this.Document != null)
             {
                 var log = this.Document.TraceLog;
                 if (log.ShouldLog(TraceLevel.Message))

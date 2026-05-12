@@ -35,26 +35,33 @@ namespace Scryber.PDF.Layout
 
         private readonly List<TrackDef> _tracks;
         private readonly List<List<GridCell>> _cellGrid; // [row][col]
+        private readonly List<TrackDef> _rowTracks;
+        private readonly List<TableRow> _syntheticRows;
 
         // -----------------------------------------------------------------------
         // Constructor
         // -----------------------------------------------------------------------
 
         public LayoutEngineFlexGrid(ContainerComponent container, IPDFLayoutEngine parent)
-            : base(BuildSyntheticTable(container, out var tracks, out var cellGrid), parent)
+            : base(BuildSyntheticTable(container, out var tracks, out var cellGrid, out var syntheticRows, out var rowTracks), parent)
         {
-            _tracks = tracks;
-            _cellGrid = cellGrid;
+            _tracks       = tracks;
+            _cellGrid     = cellGrid;
+            _syntheticRows = syntheticRows;
+            _rowTracks    = rowTracks;
         }
 
         // -----------------------------------------------------------------------
-        // Width injection — called before base processes cell styles
+        // Width/height injection — called before base processes cell styles
         // -----------------------------------------------------------------------
 
         protected override void DoLayoutComponent()
         {
             if (_tracks.Count > 0 && _cellGrid.Count > 0)
                 InjectColumnWidths();
+
+            if (_rowTracks.Count > 0 && _syntheticRows.Count > 0)
+                InjectRowHeights();
 
             base.DoLayoutComponent();
         }
@@ -149,10 +156,14 @@ namespace Scryber.PDF.Layout
         private static TableGrid BuildSyntheticTable(
             ContainerComponent source,
             out List<TrackDef> tracks,
-            out List<List<GridCell>> cellGrid)
+            out List<List<GridCell>> cellGrid,
+            out List<TableRow> syntheticRows,
+            out List<TrackDef> rowTracks)
         {
-            tracks = ParseTemplateCols(source);
-            cellGrid = new List<List<GridCell>>();
+            tracks       = ParseTemplateCols(source);
+            rowTracks    = ParseTemplateRows(source);
+            cellGrid     = new List<List<GridCell>>();
+            syntheticRows = new List<TableRow>();
 
             var grid = new TableGrid();
             int colCount = tracks.Count;
@@ -186,14 +197,45 @@ namespace Scryber.PDF.Layout
 
                 grid.Rows.Add(row);
                 cellGrid.Add(rowCells);
+                syntheticRows.Add(row);
             }
 
             return grid;
         }
 
         // -----------------------------------------------------------------------
-        // grid-template-columns parser
+        // Row height injection
         // -----------------------------------------------------------------------
+
+        private void InjectRowHeights()
+        {
+            // TableRow strips SizeHeightKey in RemoveInapplicableStyles, so we inject
+            // the explicit height onto each GridCell in the row instead.
+            for (int r = 0; r < _rowTracks.Count && r < _cellGrid.Count; r++)
+            {
+                var track = _rowTracks[r];
+                if (track.Type == TrackType.Points && track.Value > 0)
+                {
+                    var unit = new Unit(track.Value, PageUnits.Points);
+                    foreach (var cell in _cellGrid[r])
+                        cell.Style.Size.Height = unit;
+                }
+            }
+        }
+
+        // -----------------------------------------------------------------------
+        // grid-template-columns / grid-template-rows parsers
+        // -----------------------------------------------------------------------
+
+        private static List<TrackDef> ParseTemplateRows(ContainerComponent source)
+        {
+            if (!(source is IStyledComponent sc) || !sc.HasStyle)
+                return new List<TrackDef>();
+            var raw = sc.Style.GetValue(StyleKeys.GridTemplateRowsKey, null as string);
+            if (string.IsNullOrWhiteSpace(raw))
+                return new List<TrackDef>();
+            return ParseTrackList(raw);
+        }
 
         private static List<TrackDef> ParseTemplateCols(ContainerComponent source)
         {
