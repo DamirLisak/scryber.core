@@ -510,5 +510,355 @@ namespace Scryber.UnitLayouts
 
             StringAssert.Contains(CollectText(panelBlock.Columns[0]), "Only Child", "Single child text");
         }
+
+        // -----------------------------------------------------------------------
+        // align-items
+        // -----------------------------------------------------------------------
+
+        [TestCategory(TestCategory)]
+        [TestMethod()]
+        public void FlexRow_AlignItems_FlexStart_NoOffset()
+        {
+            // flex-start (the default) — shorter child should start at Y=0, same as taller child.
+            var doc   = CreateDoc(out var pg);
+            var panel = CreateFlexContainer(pg);
+            panel.Style.Flex.AlignItems = FlexAlignMode.FlexStart;
+            AddChild(panel, height: 50, label: "Short");
+            AddChild(panel, height: 80, label: "Tall");
+
+            using (var ms = DocStreams.GetOutputStream("Flex_AlignItems_FlexStart.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            var panelBlock = _layout.AllPages[0].ContentBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(panelBlock);
+            Assert.AreEqual(2, panelBlock.Columns.Length);
+
+            var shortBlock = panelBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            var tallBlock  = panelBlock.Columns[1].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(shortBlock);
+            Assert.IsNotNull(tallBlock);
+
+            Assert.AreEqual(0.0, shortBlock.TotalBounds.Y.PointsValue, 0.5,
+                "flex-start: short child should start at Y=0");
+            Assert.AreEqual(0.0, tallBlock.TotalBounds.Y.PointsValue, 0.5,
+                "flex-start: tall child should start at Y=0");
+        }
+
+        [TestCategory(TestCategory)]
+        [TestMethod()]
+        public void FlexRow_AlignItems_FlexEnd_ShortChildStartsAtBottom()
+        {
+            // flex-end — shorter child should be pushed down so its bottom aligns with taller child.
+            var doc   = CreateDoc(out var pg);
+            var panel = CreateFlexContainer(pg);
+            panel.Style.Flex.AlignItems = FlexAlignMode.FlexEnd;
+            AddChild(panel, height: 50, label: "Short");  // col 0
+            AddChild(panel, height: 80, label: "Tall");   // col 1
+
+            using (var ms = DocStreams.GetOutputStream("Flex_AlignItems_FlexEnd.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            var panelBlock = _layout.AllPages[0].ContentBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(panelBlock);
+            Assert.AreEqual(2, panelBlock.Columns.Length);
+
+            var shortBlock = panelBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            var tallBlock  = panelBlock.Columns[1].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(shortBlock);
+            Assert.IsNotNull(tallBlock);
+
+            // Short child (50pt) in a row of 80pt — offset = 80 - 50 = 30pt.
+            Assert.AreEqual(30.0, shortBlock.TotalBounds.Y.PointsValue, 0.5,
+                "flex-end: short child Y should be (maxH - childH) = 30pt");
+            Assert.AreEqual(0.0, tallBlock.TotalBounds.Y.PointsValue, 0.5,
+                "flex-end: tallest child should stay at Y=0");
+
+            // Text present in each column.
+            StringAssert.Contains(CollectText(panelBlock.Columns[0]), "Short");
+            StringAssert.Contains(CollectText(panelBlock.Columns[1]), "Tall");
+        }
+
+        [TestCategory(TestCategory)]
+        [TestMethod()]
+        public void FlexRow_AlignItems_Center_ShortChildIsCentered()
+        {
+            // center — shorter child should be pushed down by half the height difference.
+            var doc   = CreateDoc(out var pg);
+            var panel = CreateFlexContainer(pg);
+            panel.Style.Flex.AlignItems = FlexAlignMode.Center;
+            AddChild(panel, height: 50, label: "Short");  // col 0
+            AddChild(panel, height: 80, label: "Tall");   // col 1
+
+            using (var ms = DocStreams.GetOutputStream("Flex_AlignItems_Center.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            var panelBlock = _layout.AllPages[0].ContentBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(panelBlock);
+            Assert.AreEqual(2, panelBlock.Columns.Length);
+
+            var shortBlock = panelBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            var tallBlock  = panelBlock.Columns[1].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(shortBlock);
+            Assert.IsNotNull(tallBlock);
+
+            // Short child (50pt) in a row of 80pt — offset = (80 - 50) / 2 = 15pt.
+            Assert.AreEqual(15.0, shortBlock.TotalBounds.Y.PointsValue, 0.5,
+                "center: short child Y should be (maxH - childH) / 2 = 15pt");
+            Assert.AreEqual(0.0, tallBlock.TotalBounds.Y.PointsValue, 0.5,
+                "center: tallest child should stay at Y=0");
+        }
+
+        [TestCategory(TestCategory)]
+        [TestMethod()]
+        public void FlexRow_AlignItems_EqualHeights_NoOffset()
+        {
+            // When all children have equal height, align-items has no visible effect.
+            var doc   = CreateDoc(out var pg);
+            var panel = CreateFlexContainer(pg);
+            panel.Style.Flex.AlignItems = FlexAlignMode.FlexEnd;
+            AddChild(panel, height: 60, label: "A");
+            AddChild(panel, height: 60, label: "B");
+
+            using (var ms = DocStreams.GetOutputStream("Flex_AlignItems_EqualHeights.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            var panelBlock = _layout.AllPages[0].ContentBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(panelBlock);
+            Assert.AreEqual(2, panelBlock.Columns.Length);
+
+            var block0 = panelBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            var block1 = panelBlock.Columns[1].Contents[0] as PDFLayoutBlock;
+            Assert.AreEqual(0.0, block0.TotalBounds.Y.PointsValue, 0.5, "Equal-height child 0 should have Y=0");
+            Assert.AreEqual(0.0, block1.TotalBounds.Y.PointsValue, 0.5, "Equal-height child 1 should have Y=0");
+        }
+
+        [TestCategory(TestCategory)]
+        [TestMethod()]
+        public void FlexRow_AlignItems_CSSParsed_Center()
+        {
+            // Verify align-items:center is correctly parsed from an inline CSS string.
+            var src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<body style=""margin:0; padding:0;"">
+  <div style=""display:flex; align-items:center; width:600pt;"">
+    <div style=""height:50pt; flex-grow:1; padding:4pt;"">Short</div>
+    <div style=""height:80pt; flex-grow:1; padding:4pt;"">Tall</div>
+  </div>
+</body>
+</html>";
+
+            using var doc = Document.Parse(new System.IO.StringReader(src),
+                                           ParseSourceType.DynamicContent) as Document;
+            Assert.IsNotNull(doc);
+
+            PDFLayoutDocument layout = null;
+            using (var ms = DocStreams.GetOutputStream("Flex_AlignItems_CSS_Center.pdf"))
+            {
+                doc.LayoutComplete += (s, e) => layout = e.Context.GetLayout<PDFLayoutDocument>();
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(layout);
+            var flexBlock = FindFlexBlock(layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(flexBlock, "Should find flex row block");
+            Assert.AreEqual(2, flexBlock.Columns.Length);
+
+            var shortBlock = flexBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            var tallBlock  = flexBlock.Columns[1].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(shortBlock);
+            Assert.IsNotNull(tallBlock);
+
+            // center: offset = (80 - 50) / 2 = 15pt
+            Assert.AreEqual(15.0, shortBlock.TotalBounds.Y.PointsValue, 0.5,
+                "CSS align-items:center should offset short child by 15pt");
+            Assert.AreEqual(0.0, tallBlock.TotalBounds.Y.PointsValue, 0.5,
+                "CSS align-items:center: tall child stays at Y=0");
+        }
+
+        // -----------------------------------------------------------------------
+        // justify-content (only has effect when items do not fill the container,
+        // i.e. flex-grow:0 with explicit widths)
+        // -----------------------------------------------------------------------
+
+        [TestCategory(TestCategory)]
+        [TestMethod()]
+        public void FlexRow_JustifyContent_FlexStart_NoShift()
+        {
+            // flex-start is the default — items sit at the left edge.
+            var src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<body style=""margin:0; padding:0;"">
+  <div style=""display:flex; justify-content:flex-start; width:600pt;"">
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">A</div>
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">B</div>
+  </div>
+</body>
+</html>";
+
+            using var doc = Document.Parse(new System.IO.StringReader(src),
+                                           ParseSourceType.DynamicContent) as Document;
+            PDFLayoutDocument layout = null;
+            using (var ms = DocStreams.GetOutputStream("Flex_Justify_FlexStart.pdf"))
+            {
+                doc.LayoutComplete += (s, e) => layout = e.Context.GetLayout<PDFLayoutDocument>();
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(layout);
+            var flexBlock = FindFlexBlock(layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(flexBlock);
+
+            // flex-start: col0 stays at X=0, col1 immediately follows.
+            Assert.AreEqual(0.0, flexBlock.Columns[0].TotalBounds.X.PointsValue, 0.5,
+                "flex-start: column 0 should start at X=0");
+            Assert.AreEqual(100.0, flexBlock.Columns[1].TotalBounds.X.PointsValue, 0.5,
+                "flex-start: column 1 should start at X=100 (right after col 0)");
+        }
+
+        [TestCategory(TestCategory)]
+        [TestMethod()]
+        public void FlexRow_JustifyContent_FlexEnd_ItemsShiftRight()
+        {
+            // flex-end — items pack to the right. Two 100pt items in 600pt → leftover 400pt.
+            var src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<body style=""margin:0; padding:0;"">
+  <div style=""display:flex; justify-content:flex-end; width:600pt;"">
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">A</div>
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">B</div>
+  </div>
+</body>
+</html>";
+
+            using var doc = Document.Parse(new System.IO.StringReader(src),
+                                           ParseSourceType.DynamicContent) as Document;
+            PDFLayoutDocument layout = null;
+            using (var ms = DocStreams.GetOutputStream("Flex_Justify_FlexEnd.pdf"))
+            {
+                doc.LayoutComplete += (s, e) => layout = e.Context.GetLayout<PDFLayoutDocument>();
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(layout);
+            var flexBlock = FindFlexBlock(layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(flexBlock);
+
+            // leftover = 600 - (100 + 100) = 400. Both cols shift right by 400.
+            Assert.AreEqual(400.0, flexBlock.Columns[0].TotalBounds.X.PointsValue, 0.5,
+                "flex-end: column 0 should start at X=400");
+            Assert.AreEqual(500.0, flexBlock.Columns[1].TotalBounds.X.PointsValue, 0.5,
+                "flex-end: column 1 should start at X=500");
+        }
+
+        [TestCategory(TestCategory)]
+        [TestMethod()]
+        public void FlexRow_JustifyContent_Center_ItemsCentered()
+        {
+            // center — items are centred. Two 100pt items in 600pt → leftover 400 → shift by 200.
+            var src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<body style=""margin:0; padding:0;"">
+  <div style=""display:flex; justify-content:center; width:600pt;"">
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">A</div>
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">B</div>
+  </div>
+</body>
+</html>";
+
+            using var doc = Document.Parse(new System.IO.StringReader(src),
+                                           ParseSourceType.DynamicContent) as Document;
+            PDFLayoutDocument layout = null;
+            using (var ms = DocStreams.GetOutputStream("Flex_Justify_Center.pdf"))
+            {
+                doc.LayoutComplete += (s, e) => layout = e.Context.GetLayout<PDFLayoutDocument>();
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(layout);
+            var flexBlock = FindFlexBlock(layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(flexBlock);
+
+            // shift = 400 / 2 = 200. col0: 0+200=200, col1: 100+200=300.
+            Assert.AreEqual(200.0, flexBlock.Columns[0].TotalBounds.X.PointsValue, 0.5,
+                "center: column 0 should start at X=200");
+            Assert.AreEqual(300.0, flexBlock.Columns[1].TotalBounds.X.PointsValue, 0.5,
+                "center: column 1 should start at X=300");
+        }
+
+        [TestCategory(TestCategory)]
+        [TestMethod()]
+        public void FlexRow_JustifyContent_SpaceBetween_SpacesDistributed()
+        {
+            // space-between — first item at left, last at right, equal gaps between.
+            // Two 100pt items in 600pt → leftover 400 → one gap of 400 between them.
+            var src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<body style=""margin:0; padding:0;"">
+  <div style=""display:flex; justify-content:space-between; width:600pt;"">
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">A</div>
+    <div style=""width:100pt; height:50pt; flex-grow:0; padding:4pt;"">B</div>
+  </div>
+</body>
+</html>";
+
+            using var doc = Document.Parse(new System.IO.StringReader(src),
+                                           ParseSourceType.DynamicContent) as Document;
+            PDFLayoutDocument layout = null;
+            using (var ms = DocStreams.GetOutputStream("Flex_Justify_SpaceBetween.pdf"))
+            {
+                doc.LayoutComplete += (s, e) => layout = e.Context.GetLayout<PDFLayoutDocument>();
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(layout);
+            var flexBlock = FindFlexBlock(layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(flexBlock);
+
+            // col0 stays at X=0; col1 shifts right by gap=400 → 100+400=500.
+            Assert.AreEqual(0.0, flexBlock.Columns[0].TotalBounds.X.PointsValue, 0.5,
+                "space-between: column 0 should stay at X=0");
+            Assert.AreEqual(500.0, flexBlock.Columns[1].TotalBounds.X.PointsValue, 0.5,
+                "space-between: column 1 should be at X=500 (last item at right edge)");
+        }
+
+        [TestCategory(TestCategory)]
+        [TestMethod()]
+        public void FlexRow_JustifyContent_GrowItems_NoEffect()
+        {
+            // With flex-grow > 0, items fill the container so justify-content has no effect.
+            var doc   = CreateDoc(out var pg);
+            var panel = CreateFlexContainer(pg);
+            panel.Style.Flex.JustifyContent = FlexJustify.FlexEnd;
+            AddChild(panel, height: 50, grow: 1, label: "A");
+            AddChild(panel, height: 50, grow: 1, label: "B");
+
+            using (var ms = DocStreams.GetOutputStream("Flex_Justify_GrowNoEffect.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            var panelBlock = _layout.AllPages[0].ContentBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(panelBlock);
+            Assert.AreEqual(2, panelBlock.Columns.Length);
+
+            // Items fill the container — columns stay at their original positions.
+            Assert.AreEqual(0.0, panelBlock.Columns[0].TotalBounds.X.PointsValue, 0.5,
+                "Grow items: col 0 should start at X=0 (justify-content is no-op)");
+            Assert.AreEqual(PageW / 2.0, panelBlock.Columns[1].TotalBounds.X.PointsValue, 0.5,
+                "Grow items: col 1 should start at X=300 (justify-content is no-op)");
+        }
     }
 }
