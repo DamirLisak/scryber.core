@@ -44,9 +44,20 @@ namespace Scryber.PDF.Layout
                 var gap    = flex.Gap;
                 var colGap = this.FullStyle.IsValueDefined(StyleKeys.FlexColumnGapKey) ? flex.ColumnGap : gap;
 
-                double containerW = position.Width.HasValue
-                    ? position.Width.Value.PointsValue
-                    : this.DocumentLayout.CurrentPage.LastOpenBlock()?.AvailableBounds.Width.PointsValue ?? 0;
+                double containerW;
+                if (position.Width.HasValue)
+                {
+                    containerW = position.Width.Value.PointsValue;
+                    // position.Width is the outer/border-box width; subtract padding so
+                    // fractions are computed against the same inner width that
+                    // GetPercentColumnWidths receives (avail.Width).
+                    if (!position.Padding.IsEmpty)
+                        containerW -= (position.Padding.Left + position.Padding.Right).PointsValue;
+                }
+                else
+                {
+                    containerW = this.DocumentLayout.CurrentPage.LastOpenBlock()?.AvailableBounds.Width.PointsValue ?? 0;
+                }
 
                 var widths = ComputeColumnWidths(childCount, containerW, colGap.PointsValue);
 
@@ -180,6 +191,16 @@ namespace Scryber.PDF.Layout
             return 0;
         }
 
+        private static double FirstChildWidth(PDFLayoutRegion col)
+        {
+            foreach (var item in col.Contents)
+            {
+                if (item is PDFLayoutBlock b)
+                    return b.TotalBounds.Width.PointsValue;
+            }
+            return 0;
+        }
+
         // -----------------------------------------------------------------------
         // Post-layout: justify-content (main-axis / X in row mode)
         // -----------------------------------------------------------------------
@@ -193,6 +214,16 @@ namespace Scryber.PDF.Layout
             double totalColW  = 0;
             for (int i = 0; i < colCount; i++)
                 totalColW += flexBlock.Columns[i].TotalBounds.Width.PointsValue;
+
+            // ShrinkToFit widens a single column to fill the block so the column width
+            // equals the container width and leftover would be zero.  Use the first
+            // child item's actual width to recover the true occupied space.
+            if (colCount == 1)
+            {
+                double childW = FirstChildWidth(flexBlock.Columns[0]);
+                if (childW > 0 && childW < totalColW)
+                    totalColW = childW;
+            }
 
             double leftover = containerW - totalColW;
             if (leftover < 1.0) return; // Items fill the container — nothing to distribute.

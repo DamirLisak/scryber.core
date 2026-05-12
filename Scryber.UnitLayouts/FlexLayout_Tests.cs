@@ -1654,5 +1654,384 @@ namespace Scryber.UnitLayouts
             Assert.AreEqual(100.0, flexBlock.Columns[2].TotalBounds.Width.PointsValue, 1.0,
                 "Overflow item C shrinks to 100pt");
         }
+
+        // ======================================================================
+        // HARDER TESTS
+        // ======================================================================
+
+        // -----------------------------------------------------------------------
+        // Nested flex — flex container inside a flex column
+        // -----------------------------------------------------------------------
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void FlexRow_NestedFlex_InnerContainerLayedOut()
+        {
+            // Outer flex row: 2 grow:1 columns → each 300pt wide.
+            // The first column's child is itself a flex row with 2 grow:1 items.
+            // Inner items should each be 150pt (half of 300pt).
+            var doc   = CreateDoc(out var pg);
+            var outer = CreateFlexContainer(pg);
+
+            // Inner flex container placed as the first child of outer.
+            var inner = new Panel();
+            inner.Style.Position.DisplayMode = DisplayMode.FlexBox;
+            inner.Style.Flex.Direction       = FlexDirection.Row;
+            inner.Style.Border.LineStyle = LineType.Solid;
+            inner.Style.Border.Width     = 1;
+            inner.Style.Border.Color     = new Color(0, 150, 200);
+            // No explicit width — will fill its allocated column.
+            AddChild(inner, height: 60, grow: 1, label: "In-A", borderColor: new Color(200, 80, 80));
+            AddChild(inner, height: 60, grow: 1, label: "In-B", borderColor: new Color(80, 200, 80));
+            outer.Contents.Add(inner);
+
+            // Second child is a plain item.
+            AddChild(outer, height: 60, grow: 1, label: "Out-B", borderColor: new Color(80, 80, 200));
+
+            using (var ms = DocStreams.GetOutputStream("Flex_Nested_InnerFlex.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            var outerBlock = _layout.AllPages[0].ContentBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(outerBlock);
+            Assert.AreEqual(2, outerBlock.Columns.Length, "Outer flex: 2 columns");
+
+            // Outer columns: each 300pt.
+            Assert.AreEqual(300.0, outerBlock.Columns[0].TotalBounds.Width.PointsValue, 1.0, "Outer col0 = 300pt");
+            Assert.AreEqual(300.0, outerBlock.Columns[1].TotalBounds.Width.PointsValue, 1.0, "Outer col1 = 300pt");
+
+            // Find the inner flex block inside outer column 0.
+            PDFLayoutBlock innerBlock = null;
+            foreach (var item in outerBlock.Columns[0].Contents)
+                if (item is PDFLayoutBlock b && b.Columns.Length == 2) { innerBlock = b; break; }
+
+            Assert.IsNotNull(innerBlock, "Inner flex block should exist in outer col0");
+            Assert.AreEqual(2, innerBlock.Columns.Length, "Inner flex: 2 columns");
+            Assert.AreEqual(150.0, innerBlock.Columns[0].TotalBounds.Width.PointsValue, 2.0, "Inner col0 = 150pt");
+            Assert.AreEqual(150.0, innerBlock.Columns[1].TotalBounds.Width.PointsValue, 2.0, "Inner col1 = 150pt");
+        }
+
+        // -----------------------------------------------------------------------
+        // Single-item edge cases for justify-content
+        // -----------------------------------------------------------------------
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void FlexRow_JustifyContent_SpaceBetween_SingleItem_Centers()
+        {
+            // space-between with a single item: engine special-cases colCount==1
+            // and centres the item (startOffset = leftover/2).
+            // 1 × 100pt in 600pt → leftover=500, startOffset=250 → X=250.
+            var doc   = CreateDoc(out var pg);
+            var panel = CreateFlexContainer(pg);
+            panel.Style.Flex.JustifyContent = FlexJustify.SpaceBetween;
+            var item = AddChild(panel, height: 50, grow: 0, label: "Solo", borderColor: new Color(200, 80, 80));
+            item.Width = 100;
+
+            using (var ms = DocStreams.GetOutputStream("Flex_Justify_SpaceBetween_1.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            var panelBlock = _layout.AllPages[0].ContentBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(panelBlock);
+            Assert.AreEqual(1, panelBlock.Columns.Length);
+            Assert.AreEqual(250.0, panelBlock.Columns[0].TotalBounds.X.PointsValue, 1.0,
+                "space-between single item: centres at X=250");
+        }
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void FlexRow_JustifyContent_SpaceAround_SingleItem_Centers()
+        {
+            // space-around with a single item: aroundUnit=leftover, startOffset=leftover/2.
+            // Same centering as space-between for a single item.
+            var doc   = CreateDoc(out var pg);
+            var panel = CreateFlexContainer(pg);
+            panel.Style.Flex.JustifyContent = FlexJustify.SpaceAround;
+            var item = AddChild(panel, height: 50, grow: 0, label: "Solo", borderColor: new Color(80, 80, 200));
+            item.Width = 100;
+
+            using (var ms = DocStreams.GetOutputStream("Flex_Justify_SpaceAround_1.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            var panelBlock = _layout.AllPages[0].ContentBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(panelBlock);
+            Assert.AreEqual(1, panelBlock.Columns.Length);
+            Assert.AreEqual(250.0, panelBlock.Columns[0].TotalBounds.X.PointsValue, 1.0,
+                "space-around single item: centres at X=250");
+        }
+
+        // -----------------------------------------------------------------------
+        // Ten equal items — verifies column-width arithmetic at scale
+        // -----------------------------------------------------------------------
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void FlexRow_TenEqualGrowItems_EachSixtyPt()
+        {
+            // 10 × grow:1 in 600pt → each column = 60pt.
+            var doc   = CreateDoc(out var pg);
+            var panel = CreateFlexContainer(pg);
+            for (int i = 0; i < 10; i++)
+                AddChild(panel, height: 40, grow: 1, label: i.ToString(),
+                         borderColor: new Color((byte)(20 * i + 40), 80, 160));
+
+            using (var ms = DocStreams.GetOutputStream("Flex_10Equal.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            var panelBlock = _layout.AllPages[0].ContentBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(panelBlock);
+            Assert.AreEqual(10, panelBlock.Columns.Length, "10 items → 10 columns");
+
+            for (int i = 0; i < 10; i++)
+                Assert.AreEqual(60.0, panelBlock.Columns[i].TotalBounds.Width.PointsValue, 1.0,
+                    $"Col {i} width = 60pt");
+
+            Assert.AreEqual(  0.0, panelBlock.Columns[0].TotalBounds.X.PointsValue, 0.5, "Col 0 at X=0");
+            Assert.AreEqual(540.0, panelBlock.Columns[9].TotalBounds.X.PointsValue, 1.0, "Col 9 at X=540");
+        }
+
+        // -----------------------------------------------------------------------
+        // Asymmetric padding
+        // -----------------------------------------------------------------------
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void FlexRow_AsymmetricPadding_ContentAreaReflected()
+        {
+            // padding-left:40, padding-right:10 → content = 600-50 = 550pt.
+            // 2 grow:1 items → each = 275pt.
+            var doc   = CreateDoc(out var pg);
+            var panel = CreateFlexContainer(pg);
+            panel.Style.Padding.Left  = 40;
+            panel.Style.Padding.Right = 10;
+            AddChild(panel, height: 50, grow: 1, label: "A", borderColor: new Color(200, 80, 80));
+            AddChild(panel, height: 50, grow: 1, label: "B", borderColor: new Color(80, 80, 200));
+
+            using (var ms = DocStreams.GetOutputStream("Flex_AsymmetricPadding.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            var panelBlock = _layout.AllPages[0].ContentBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(panelBlock);
+            Assert.AreEqual(2, panelBlock.Columns.Length);
+            Assert.AreEqual(275.0, panelBlock.Columns[0].TotalBounds.Width.PointsValue, 1.0, "Col 0 = 275pt");
+            Assert.AreEqual(275.0, panelBlock.Columns[1].TotalBounds.Width.PointsValue, 1.0, "Col 1 = 275pt");
+        }
+
+        // -----------------------------------------------------------------------
+        // Oversized gap — working width clamps to zero, items get equal fractions
+        // -----------------------------------------------------------------------
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void FlexRow_OversizedGap_DoesNotThrow()
+        {
+            // Gap of 400pt with 3 items in 600pt → totalGap=800 > 600.
+            // Math.Max(0, 600-800) = 0 working pts. Engine should not throw.
+            var doc   = CreateDoc(out var pg);
+            var panel = CreateFlexContainer(pg);
+            panel.Style.Flex.ColumnGap = 400;
+            AddChild(panel, height: 50, grow: 1, label: "A", borderColor: new Color(200, 80, 80));
+            AddChild(panel, height: 50, grow: 1, label: "B", borderColor: new Color(80, 200, 80));
+            AddChild(panel, height: 50, grow: 1, label: "C", borderColor: new Color(80, 80, 200));
+
+            using (var ms = DocStreams.GetOutputStream("Flex_OversizedGap.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            Assert.IsNotNull(_layout, "Layout should complete without throwing");
+            var panelBlock = _layout.AllPages[0].ContentBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(panelBlock);
+            Assert.AreEqual(3, panelBlock.Columns.Length, "All 3 items still placed");
+        }
+
+        // -----------------------------------------------------------------------
+        // All-features combined — padding + gap + mixed grows + align + justify
+        // -----------------------------------------------------------------------
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void FlexRow_AllFeaturesCombined()
+        {
+            // Container: 600pt, padding:15 all, column-gap:10.
+            // Items: A(grow:0, w:80, h:40), B(grow:1, h:80), C(grow:0, w:80, h:60).
+            // content=570, gap=2×10=20, working=550.
+            // Fixed=80+80=160, remaining=550-160=390 → B gets 390pt.
+            // align:center → row height=80: A Y=20, B Y=0, C Y=10.
+            var doc   = CreateDoc(out var pg);
+            var panel = CreateFlexContainer(pg);
+            panel.Style.Padding.All    = 15;
+            panel.Style.Flex.ColumnGap = 10;
+            panel.Style.Flex.AlignItems = FlexAlignMode.Center;
+            var a = AddChild(panel, height: 40, grow: 0, label: "A\n(fixed 80)", borderColor: new Color(200,  80,  80));
+                    AddChild(panel, height: 80, grow: 1, label: "B\n(flex)",     borderColor: new Color( 80, 200,  80));
+            var c = AddChild(panel, height: 60, grow: 0, label: "C\n(fixed 80)", borderColor: new Color( 80,  80, 200));
+            a.Width = 80;
+            c.Width = 80;
+
+            using (var ms = DocStreams.GetOutputStream("Flex_AllFeaturesCombined.pdf"))
+            {
+                doc.LayoutComplete += Doc_LayoutComplete;
+                doc.SaveAsPDF(ms);
+            }
+
+            var panelBlock = _layout.AllPages[0].ContentBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(panelBlock);
+            Assert.AreEqual(3, panelBlock.Columns.Length);
+
+            // Widths.
+            Assert.AreEqual( 80.0, panelBlock.Columns[0].TotalBounds.Width.PointsValue, 1.0, "A = 80pt (fixed)");
+            Assert.AreEqual(390.0, panelBlock.Columns[1].TotalBounds.Width.PointsValue, 2.0, "B = 390pt (flex remainder)");
+            Assert.AreEqual( 80.0, panelBlock.Columns[2].TotalBounds.Width.PointsValue, 1.0, "C = 80pt (fixed)");
+
+            // Align-center Y offsets.
+            var bA = panelBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            var bB = panelBlock.Columns[1].Contents[0] as PDFLayoutBlock;
+            var bC = panelBlock.Columns[2].Contents[0] as PDFLayoutBlock;
+            Assert.AreEqual(20.0, bA.TotalBounds.Y.PointsValue, 1.0, "A (h=40) Y = (80-40)/2 = 20");
+            Assert.AreEqual( 0.0, bB.TotalBounds.Y.PointsValue, 1.0, "B (h=80, tallest) Y = 0");
+            Assert.AreEqual(10.0, bC.TotalBounds.Y.PointsValue, 1.0, "C (h=60) Y = (80-60)/2 = 10");
+        }
+
+        // -----------------------------------------------------------------------
+        // CSS-parsed real-world patterns
+        // -----------------------------------------------------------------------
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void FlexRow_CSSParsed_NavBarPattern()
+        {
+            // Classic nav bar: logo on left (fixed width), spacer (grows), 3 nav items (fixed).
+            // logo=150pt, spacer=grow:1, nav×3=80pt each.
+            // Container=600, all items grow=0 except spacer.
+            // Fixed = 150 + 3×80 = 390. Remaining = 210 → spacer gets 210pt.
+            const string src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<body style=""margin:0; padding:0;"">
+  <div style=""display:flex; width:600pt; align-items:center; padding:8pt; border:1pt solid #000000;"">
+    <div style=""width:150pt; height:40pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#1E3A5F; color:#FFFFFF;"">Logo</div>
+    <div style=""flex-grow:1; height:10pt;""></div>
+    <div style=""width:80pt; height:40pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#D0E8FF;"">Home</div>
+    <div style=""width:80pt; height:40pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#D0E8FF;"">About</div>
+    <div style=""width:80pt; height:40pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#D0E8FF;"">Contact</div>
+  </div>
+</body>
+</html>";
+            using var doc = Document.Parse(new System.IO.StringReader(src), ParseSourceType.DynamicContent) as Document;
+            PDFLayoutDocument layout = null;
+            using (var ms = DocStreams.GetOutputStream("Flex_NavBar.pdf"))
+            {
+                doc.LayoutComplete += (s, e) => layout = e.Context.GetLayout<PDFLayoutDocument>();
+                doc.SaveAsPDF(ms);
+            }
+
+            var flexBlock = FindFlexBlock(layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(flexBlock);
+            Assert.AreEqual(5, flexBlock.Columns.Length, "Logo + spacer + 3 nav items = 5 columns");
+
+            // content = 600-16=584. Fixed = 150 + 3×80 = 390. Remaining = 194 → spacer.
+            double contentW = 600.0 - 16.0;
+            double spacerW  = contentW - (150.0 + 3 * 80.0);
+            Assert.AreEqual(150.0,  flexBlock.Columns[0].TotalBounds.Width.PointsValue, 1.0, "Logo = 150pt");
+            Assert.AreEqual(spacerW, flexBlock.Columns[1].TotalBounds.Width.PointsValue, 2.0, $"Spacer = {spacerW}pt");
+            Assert.AreEqual( 80.0,  flexBlock.Columns[4].TotalBounds.Width.PointsValue, 1.0, "Last nav item = 80pt");
+
+            // Align-center: spacer height=10, nav height=40 → max=40.
+            // Spacer Y = (40-10)/2 = 15.
+            var spacerBlock = flexBlock.Columns[1].Contents[0] as PDFLayoutBlock;
+            Assert.IsNotNull(spacerBlock);
+            Assert.AreEqual(15.0, spacerBlock.TotalBounds.Y.PointsValue, 1.0, "Spacer centered at Y=15");
+        }
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void FlexRow_CSSParsed_SidebarContent()
+        {
+            // Sidebar + main content pattern: fixed sidebar (grow:0) + growing main area.
+            // Sidebar=160pt fixed, main grows, gap=12pt.
+            // Container=600. Fixed=160, gap=12 → main=600-160-12=428pt.
+            const string src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<body style=""margin:0; padding:0;"">
+  <div style=""display:flex; width:600pt; gap:12pt; align-items:flex-start; border:1pt solid #000000;"">
+    <div style=""width:160pt; height:200pt; flex-grow:0; padding:8pt; border:1pt solid #646464; background-color:#F0F4FF;"">Sidebar</div>
+    <div style=""flex-grow:1; height:120pt; padding:8pt; border:1pt solid #646464; background-color:#FFF8F0;"">Main Content Area</div>
+  </div>
+</body>
+</html>";
+            using var doc = Document.Parse(new System.IO.StringReader(src), ParseSourceType.DynamicContent) as Document;
+            PDFLayoutDocument layout = null;
+            using (var ms = DocStreams.GetOutputStream("Flex_SidebarContent.pdf"))
+            {
+                doc.LayoutComplete += (s, e) => layout = e.Context.GetLayout<PDFLayoutDocument>();
+                doc.SaveAsPDF(ms);
+            }
+
+            var flexBlock = FindFlexBlock(layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(flexBlock);
+            Assert.AreEqual(2, flexBlock.Columns.Length, "Sidebar + content = 2 columns");
+
+            Assert.AreEqual(160.0, flexBlock.Columns[0].TotalBounds.Width.PointsValue, 1.0, "Sidebar = 160pt");
+            Assert.AreEqual(428.0, flexBlock.Columns[1].TotalBounds.Width.PointsValue, 2.0, "Main = 600-160-12 = 428pt");
+
+            // flex-start: both items at Y=0.
+            var sidebarBlock = flexBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            var mainBlock    = flexBlock.Columns[1].Contents[0] as PDFLayoutBlock;
+            Assert.AreEqual(0.0, sidebarBlock.TotalBounds.Y.PointsValue, 0.5, "Sidebar Y=0");
+            Assert.AreEqual(0.0, mainBlock.TotalBounds.Y.PointsValue,    0.5, "Main Y=0");
+        }
+
+        [TestCategory(TestCategory), TestMethod()]
+        public void FlexRow_CSSParsed_CardGrid_WithAlignAndJustify()
+        {
+            // Five cards in a row: 4 fixed-width cards + space-evenly justify + align-center.
+            // Cards are different heights to make alignment visible.
+            // Container=600, no padding, 4 × 100pt = 400 → leftover=200, gap=200/5=40.
+            // Positions: X = 40, 180, 320, 460.
+            const string src = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<body style=""margin:0; padding:0;"">
+  <div style=""display:flex; width:600pt; justify-content:space-evenly; align-items:center; border:1pt solid #000000;"">
+    <div style=""width:100pt; height:40pt;  flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#D0E8FF;"">Card A</div>
+    <div style=""width:100pt; height:80pt;  flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#FFE8D0;"">Card B</div>
+    <div style=""width:100pt; height:60pt;  flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#D0FFE8;"">Card C</div>
+    <div style=""width:100pt; height:100pt; flex-grow:0; padding:4pt; border:1pt solid #646464; background-color:#FFD0E8;"">Card D</div>
+  </div>
+</body>
+</html>";
+            using var doc = Document.Parse(new System.IO.StringReader(src), ParseSourceType.DynamicContent) as Document;
+            PDFLayoutDocument layout = null;
+            using (var ms = DocStreams.GetOutputStream("Flex_CardGrid_SpaceEvenly_AlignCenter.pdf"))
+            {
+                doc.LayoutComplete += (s, e) => layout = e.Context.GetLayout<PDFLayoutDocument>();
+                doc.SaveAsPDF(ms);
+            }
+
+            var flexBlock = FindFlexBlock(layout.AllPages[0].ContentBlock.Columns[0]);
+            Assert.IsNotNull(flexBlock);
+            Assert.AreEqual(4, flexBlock.Columns.Length);
+
+            // space-evenly X positions: gap=200/5=40. col0:40, col1:180, col2:320, col3:460.
+            Assert.AreEqual( 40.0, flexBlock.Columns[0].TotalBounds.X.PointsValue, 1.0, "Card A X=40");
+            Assert.AreEqual(180.0, flexBlock.Columns[1].TotalBounds.X.PointsValue, 1.0, "Card B X=180");
+            Assert.AreEqual(320.0, flexBlock.Columns[2].TotalBounds.X.PointsValue, 1.0, "Card C X=320");
+            Assert.AreEqual(460.0, flexBlock.Columns[3].TotalBounds.X.PointsValue, 1.0, "Card D X=460");
+
+            // align-center Y offsets: row height=100. A Y=30, B Y=10, C Y=20, D Y=0.
+            var bA = flexBlock.Columns[0].Contents[0] as PDFLayoutBlock;
+            var bB = flexBlock.Columns[1].Contents[0] as PDFLayoutBlock;
+            var bC = flexBlock.Columns[2].Contents[0] as PDFLayoutBlock;
+            var bD = flexBlock.Columns[3].Contents[0] as PDFLayoutBlock;
+            Assert.AreEqual(30.0, bA.TotalBounds.Y.PointsValue, 1.0, "Card A (40pt) Y=(100-40)/2=30");
+            Assert.AreEqual(10.0, bB.TotalBounds.Y.PointsValue, 1.0, "Card B (80pt) Y=(100-80)/2=10");
+            Assert.AreEqual(20.0, bC.TotalBounds.Y.PointsValue, 1.0, "Card C (60pt) Y=(100-60)/2=20");
+            Assert.AreEqual( 0.0, bD.TotalBounds.Y.PointsValue, 1.0, "Card D (100pt, tallest) Y=0");
+        }
     }
 }
