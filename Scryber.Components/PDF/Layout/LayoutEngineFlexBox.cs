@@ -219,6 +219,11 @@ namespace Scryber.PDF.Layout
                     startOffset = aroundUnit / 2.0;
                     gapBetween  = aroundUnit;
                     break;
+                case FlexJustify.SpaceEvenly:
+                    double evenUnit = leftover / (colCount + 1);
+                    startOffset = evenUnit;
+                    gapBetween  = evenUnit;
+                    break;
             }
 
             double xOffset = startOffset;
@@ -265,6 +270,7 @@ namespace Scryber.PDF.Layout
             if (container == null || !container.HasContent) return ColumnWidths.Empty;
 
             double[] grows       = new double[count];
+            double[] fixedWidths = new double[count]; // explicit pt widths for grow=0 items
             double   totalGrow   = 0.0;
             bool     anyPositive = false;
             int      i           = 0;
@@ -281,21 +287,49 @@ namespace Scryber.PDF.Layout
 
                 grows[i] = grow;
                 totalGrow += grow;
-                if (grow > 0) anyPositive = true;
+                if (grow > 0)
+                {
+                    anyPositive = true;
+                }
+                else if (child is IStyledComponent sc2 && sc2.Style != null)
+                {
+                    // Capture the explicit width so grow=0 items can reserve their space.
+                    if (sc2.Style.IsValueDefined(StyleKeys.SizeWidthKey))
+                        fixedWidths[i] = sc2.Style.Size.Width.PointsValue;
+                    else if (sc2.Style.IsValueDefined(StyleKeys.FlexBasisKey) && !sc2.Style.Flex.BasisAuto)
+                        fixedWidths[i] = sc2.Style.Flex.Basis.PointsValue;
+                }
                 i++;
             }
 
-            // Any grow > 0: use proportional grow ratios (existing behaviour).
+            double effectiveW = Math.Max(0, containerWidthPts - alleyPts * (count - 1));
+
             if (anyPositive && totalGrow > 0)
             {
+                // Subtract the reserved space of grow=0 items so grow>0 items share the remainder.
+                double fixedTotal = 0;
+                for (int j = 0; j < count; j++)
+                    if (grows[j] == 0) fixedTotal += fixedWidths[j];
+
+                double remaining = Math.Max(0, effectiveW - fixedTotal);
+
+                double growSum = 0;
+                for (int j = 0; j < count; j++)
+                    if (grows[j] > 0) growSum += grows[j];
+
                 double[] pct = new double[count];
                 for (int j = 0; j < count; j++)
-                    pct[j] = grows[j] / totalGrow;
+                {
+                    // Fractions are of effectiveW (container minus gap alleys), same as the
+                    // all-grow=0 path and the original proportional-grow path.
+                    pct[j] = grows[j] == 0
+                        ? (effectiveW > 0 ? fixedWidths[j] / effectiveW : 0)
+                        : (growSum > 0 && effectiveW > 0 ? grows[j] / growSum * remaining / effectiveW : 0);
+                }
                 return new ColumnWidths(pct);
             }
 
-            // All grow = 0: try to read explicit widths from child styles.
-            double effectiveW = containerWidthPts - alleyPts * (count - 1);
+            // All grow = 0: use explicit widths as fractions of effective width.
             if (effectiveW <= 0) return ColumnWidths.Empty;
 
             double[] fractions = new double[count];
@@ -324,7 +358,16 @@ namespace Scryber.PDF.Layout
                 i++;
             }
 
-            return anySet ? new ColumnWidths(fractions) : ColumnWidths.Empty;
+            if (!anySet) return ColumnWidths.Empty;
+
+            // Clamp: if items collectively exceed the container, scale fractions to 1.0 total.
+            // This handles overflow-without-wrap gracefully (items shrink proportionally).
+            double totalFrac = 0;
+            for (int j = 0; j < count; j++) totalFrac += fractions[j];
+            if (totalFrac > 1.0)
+                for (int j = 0; j < count; j++) fractions[j] /= totalFrac;
+
+            return new ColumnWidths(fractions);
         }
     }
 }
