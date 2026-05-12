@@ -192,6 +192,9 @@ namespace Scryber
 				case "application/xhtml+xml":
 				case "text/xml":
 				case "image/svg+xml":
+				case "text/markdown":
+				case "text/plain":
+				case "text/x-markdown":
 					return true;
 				default:
 					return false;
@@ -228,6 +231,9 @@ namespace Scryber
 
 		public static readonly MimeType SvgImage = "image/svg+xml";
 
+		public static readonly MimeType Markdown = "text/markdown";
+		
+		public static readonly MimeType XMarkdown = "text/x-markdown";
 
 	}
 

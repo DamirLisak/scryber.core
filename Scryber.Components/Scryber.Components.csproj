@@ -6,7 +6,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Scryber.snk</AssemblyOriginatorKeyFile>
     <PackageId>Scryber.Core</PackageId>
-    <PackageVersion>9.5.0.0</PackageVersion>
+    <PackageVersion>9.5.0.1</PackageVersion>
     <Authors>richard@paperworkday.com</Authors>
     <Copyright>Richard Hewitson 2026</Copyright>
     <License>LICENSE.md</License>
@@ -14,11 +14,12 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>  
     <Owners>richard@scryber.co.uk</Owners>
     <PackageProjectUrl>https://github.com/richard-scryber/scryber.core</PackageProjectUrl>
-    <PackageReleaseNotes>9.5.0.0
+    <PackageReleaseNotes>9.5.0.1
 BREAKING RELEASE
 Removed support for Net Standard 2.0, and Image Sharp updated to 3.1.2
 All libraries updated to include dotnet 8/9/10
 Added support image format webP 
+Improved support for referenced SVG img
 Clean up codebase to remove compiler warnings
 
 9.3.1.0
@@ -179,9 +180,9 @@ Fixed application of multiple styles with the same word inside
 Allow missing images on the document is now supported.
 Contain fill style for background images.
 
-See: https://scrybercore.readthedocs.io/en/latest/version_history.html for a full break down.</PackageReleaseNotes>
-    <Summary>The scryber engine for beautiful, dynamic, PDF document creation using html templates, css support and model injection in dotnet 9, 8, 6 and Standard 2.0</Summary>
-    <PackageTags>Scryber; PDF; dotnet core; HTML, HTML2PDF; dotnet 9;</PackageTags>
+See: https://paperwork.help/changelog/scryber_core.html for a full break down.</PackageReleaseNotes>
+    <Summary>The scryber core engine for easy creation of beautiful, dynamic, PDF documents using html templates, css support and model injection in dotnet 10, 9, and 8</Summary>
+    <PackageTags>Scryber; PDF; dotnet core; HTML, HTML2PDF; dotnet 10;</PackageTags>
     <Title>Scryber</Title>
     <Description>Scryber is an advanced PDF generation engine based around HTML templates with CSS styles and SVG drawing. It includes full flowing pages, dynamic template binding on your object model and referenced external files, images, css and fonts. 
 Easily create documents from your Apps, MVC sites, or Javascipt ajax calls.
@@ -189,14 +190,13 @@ Easily create documents from your Apps, MVC sites, or Javascipt ajax calls.
 This framework is built entirely in .NET supporting Blazor WASM and is released under the LGPL licence so you can use to it in commercial applications.</Description>
     <PackOnBuild>false</PackOnBuild>
     <RootNamespace>Scryber</RootNamespace>
-    <Version>9.5.0.0</Version>
+    <Version>9.5.0.1</Version>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageIcon>PaperworkLogoTransparent.png</PackageIcon>
     <RepositoryUrl>https://github.com/richard-scryber/scryber.core</RepositoryUrl>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>9.5.0.0</FileVersion>
+    <FileVersion>9.5.0.1</FileVersion>
     <RepositoryType>Git</RepositoryType>
-    <PackageIconUrl>https://raw.githubusercontent.com/richard-scryber/scryber.core/master/docs/PaperworkLogoTransparent.png</PackageIconUrl>
     <Configurations>Release;Debug</Configurations>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>

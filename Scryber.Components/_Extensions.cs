@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Scryber.Html.Parsing;
 using Scryber.PDF.Native;
 using Scryber.PDF;
 using Scryber.Options;
@@ -85,7 +86,8 @@ namespace Scryber
 
             new Scryber.Generation.PDFXMLReflectionParserFactory(),
             new Scryber.Html.Parsing.HTMLParserFactory(),
-            new Scryber.Generation.PlainTextParserFactory()
+            new Scryber.Generation.PlainTextParserFactory(),
+            new Scryber.Html.Parsing.MarkdownParserFactory(new HTMLParserFactory())
         };
 
 

@@ -77,6 +77,13 @@ namespace Scryber.Expressive.Expressions
 
         private object DoGetMyValue(object parent, string name, ExpressionContext context)
         {
+            if (parent is IDictionary dict)
+            {
+                if(dict.Contains(name))
+                    return dict[name];
+                //fall back to the default implementation if not found
+            }
+            
             return GetPropertyValue(parent, name, context.IsCaseInsensitiveParsingEnabled);
         }
         
