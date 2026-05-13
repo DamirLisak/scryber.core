@@ -11,6 +11,11 @@ namespace Scryber.PDF.Layout
         // True while we are in row layout mode — gates the column-break injection.
         private bool _isRowMode;
 
+        // Wrap mode row range: which visible flex items belong to the current row.
+        // -1 = not in wrap mode.
+        private int _wrapRowStart = -1;
+        private int _wrapRowEnd   = -1;
+
         public LayoutEngineFlexBox(ContainerComponent container, IPDFLayoutEngine parent)
             : base(container, parent)
         {
@@ -59,6 +64,14 @@ namespace Scryber.PDF.Layout
                     containerW = this.DocumentLayout.CurrentPage.LastOpenBlock()?.AvailableBounds.Width.PointsValue ?? 0;
                 }
 
+                // Check for wrap mode
+                var wrapMode = flex.Wrap;
+                if (wrapMode == FlexWrap.Wrap || wrapMode == FlexWrap.WrapReverse)
+                {
+                    LayoutWrapRows(position, flex, flex.AlignItems, flex.JustifyContent, containerW, colGap);
+                    return;
+                }
+
                 var widths = ComputeColumnWidths(childCount, containerW, colGap.PointsValue);
 
                 var rowCols = new PDFColumnOptions()
@@ -97,8 +110,114 @@ namespace Scryber.PDF.Layout
         }
 
         /// <summary>
+        /// Lays out each wrap-row as a separate multi-column block.
+        /// </summary>
+        private void LayoutWrapRows(PDFPositionOptions position, FlexStyle flex,
+            FlexAlignMode align, FlexJustify justify, double containerW, Unit colGap)
+        {
+            var rows = ComputeWrapRows(containerW, colGap.PointsValue);
+            foreach (var (rowStart, rowEnd) in rows)
+            {
+                int rowItemCount = rowEnd - rowStart;
+                if (rowItemCount <= 0) continue;
+
+                _wrapRowStart = rowStart;
+                _wrapRowEnd   = rowEnd;
+
+                var widths  = ComputeColumnWidths(rowItemCount, containerW, colGap.PointsValue, rowStart);
+                var rowCols = new PDFColumnOptions()
+                {
+                    ColumnCount  = rowItemCount,
+                    AlleyWidth   = colGap,
+                    ColumnWidths = widths
+                };
+
+                var parentBlock  = this.DocumentLayout.CurrentPage.LastOpenBlock();
+                var parentRegion = parentBlock?.CurrentRegion;
+                int priorCount   = parentRegion?.Contents.Count ?? 0;
+
+                _isRowMode = true;
+                base.DoLayoutBlockComponent(position, rowCols);
+                _isRowMode = false;
+
+                if (parentRegion != null && parentRegion.Contents.Count > priorCount)
+                {
+                    var flexBlock = parentRegion.Contents[parentRegion.Contents.Count - 1] as PDFLayoutBlock;
+                    if (flexBlock != null && flexBlock.Columns.Length > 0)
+                    {
+                        if (align != FlexAlignMode.Stretch && align != FlexAlignMode.FlexStart)
+                            ApplyAlignItems(flexBlock, align);
+                        if (justify != FlexJustify.FlexStart)
+                            ApplyJustifyContent(flexBlock, justify);
+                    }
+                }
+            }
+            _wrapRowStart = -1;
+            _wrapRowEnd   = -1;
+        }
+
+        /// <summary>
+        /// Groups visible flex items into rows based on their fixed widths and the container width.
+        /// Items with grow > 0 (minWidth = 0) never trigger a break on their own.
+        /// </summary>
+        private List<(int start, int end)> ComputeWrapRows(double containerW, double gapPts)
+        {
+            var rows = new List<(int start, int end)>();
+            var container = this.Component as IContainerComponent;
+            if (container == null || !container.HasContent) return rows;
+
+            var minWidths = new List<double>();
+            foreach (var child in container.Content)
+            {
+                if (!IsFlexItem(child)) continue;
+                minWidths.Add(GetItemMinWidth((Component)child));
+            }
+
+            if (minWidths.Count == 0) return rows;
+
+            int    rowStart  = 0;
+            double rowFixedW = minWidths[0];
+
+            for (int i = 1; i < minWidths.Count; i++)
+            {
+                double itemW = minWidths[i];
+                // total = sum of item widths + gaps for (i - rowStart + 1) items
+                double total = rowFixedW + itemW + gapPts * (i - rowStart);
+                if (itemW > 0 && total > containerW + 0.5)
+                {
+                    rows.Add((rowStart, i));
+                    rowStart  = i;
+                    rowFixedW = itemW;
+                }
+                else
+                {
+                    rowFixedW += itemW;
+                }
+            }
+            rows.Add((rowStart, minWidths.Count));
+            return rows;
+        }
+
+        /// <summary>
+        /// Returns the fixed minimum width for a flex item (from explicit width or flex-basis).
+        /// Returns 0 for grow-only items.
+        /// </summary>
+        private static double GetItemMinWidth(Component item)
+        {
+            if (item is IStyledComponent sc && sc.Style != null)
+            {
+                if (sc.Style.IsValueDefined(StyleKeys.SizeWidthKey))
+                    return sc.Style.Size.Width.PointsValue;
+                if (sc.Style.IsValueDefined(StyleKeys.FlexBasisKey) && !sc.Style.Flex.BasisAuto)
+                    return sc.Style.Flex.Basis.PointsValue;
+            }
+            return 0;
+        }
+
+        /// <summary>
         /// Override DoLayoutChildren: in row mode, force a column break after each flex item
         /// so each child occupies exactly one column region.
+        /// In wrap mode, only the items in [_wrapRowStart, _wrapRowEnd) are rendered.
         /// </summary>
         protected override void DoLayoutChildren(ComponentList children)
         {
@@ -108,23 +227,39 @@ namespace Scryber.PDF.Layout
                 return;
             }
 
-            bool first = true;
+            int  visIdx = -1;
+            bool first  = true;
+
             foreach (Component comp in children)
             {
                 if (!comp.Visible) continue;
 
                 bool isItem = IsFlexItem(comp);
 
-                if (isItem && !first)
+                if (isItem)
                 {
-                    PDFLayoutBlock block = this.DocumentLayout.CurrentPage.LastOpenBlock();
-                    PDFLayoutRegion reg  = block.CurrentRegion;
-                    bool newPage;
-                    this.MoveToNextRegion(Unit.Zero, ref reg, ref block, out newPage);
+                    visIdx++;
+
+                    // In wrap mode: skip items outside [_wrapRowStart, _wrapRowEnd)
+                    if (_wrapRowStart >= 0 && (visIdx < _wrapRowStart || visIdx >= _wrapRowEnd))
+                        continue;
+
+                    if (!first)
+                    {
+                        PDFLayoutBlock block = this.DocumentLayout.CurrentPage.LastOpenBlock();
+                        PDFLayoutRegion reg  = block.CurrentRegion;
+                        bool newPage;
+                        this.MoveToNextRegion(Unit.Zero, ref reg, ref block, out newPage);
+                    }
+                    first = false;
+                }
+                else if (_wrapRowStart > 0)
+                {
+                    // Non-flex content only goes in the first wrap row
+                    continue;
                 }
 
                 this.DoLayoutAChild(comp);
-                if (isItem) first = false;
 
                 if (!this.ContinueLayout
                     || this.DocumentLayout.CurrentPage.IsClosed
@@ -289,26 +424,30 @@ namespace Scryber.PDF.Layout
         }
 
         /// <summary>
-        /// Computes per-column width fractions.
+        /// Computes per-column width fractions for a row of <paramref name="count"/> items,
+        /// optionally starting from visible-item index <paramref name="itemOffset"/>.
         /// When any item has flex-grow > 0 the fractions are proportional to grow values.
         /// When all items have flex-grow = 0 the fractions are derived from their explicit
         /// widths (width or flex-basis) if set, so that justify-content can redistribute
         /// any leftover space post-layout.
         /// </summary>
-        private ColumnWidths ComputeColumnWidths(int count, double containerWidthPts, double alleyPts)
+        private ColumnWidths ComputeColumnWidths(int count, double containerWidthPts, double alleyPts,
+                                                  int itemOffset = 0)
         {
             var container = this.Component as IContainerComponent;
             if (container == null || !container.HasContent) return ColumnWidths.Empty;
 
             double[] grows       = new double[count];
-            double[] fixedWidths = new double[count]; // explicit pt widths for grow=0 items
+            double[] fixedWidths = new double[count];
             double   totalGrow   = 0.0;
             bool     anyPositive = false;
             int      i           = 0;
+            int      visIdx      = 0;
 
             foreach (var child in container.Content)
             {
                 if (!IsFlexItem(child)) continue;
+                if (visIdx < itemOffset) { visIdx++; continue; }
                 if (i >= count) break;
 
                 double grow = 1.0;
@@ -316,7 +455,7 @@ namespace Scryber.PDF.Layout
                     && sc.Style.IsValueDefined(StyleKeys.FlexGrowKey))
                     grow = sc.Style.GetValue(StyleKeys.FlexGrowKey, 1.0);
 
-                grows[i] = grow;
+                grows[i]   = grow;
                 totalGrow += grow;
                 if (grow > 0)
                 {
@@ -324,12 +463,12 @@ namespace Scryber.PDF.Layout
                 }
                 else if (child is IStyledComponent sc2 && sc2.Style != null)
                 {
-                    // Capture the explicit width so grow=0 items can reserve their space.
                     if (sc2.Style.IsValueDefined(StyleKeys.SizeWidthKey))
                         fixedWidths[i] = sc2.Style.Size.Width.PointsValue;
                     else if (sc2.Style.IsValueDefined(StyleKeys.FlexBasisKey) && !sc2.Style.Flex.BasisAuto)
                         fixedWidths[i] = sc2.Style.Flex.Basis.PointsValue;
                 }
+                visIdx++;
                 i++;
             }
 
@@ -337,7 +476,6 @@ namespace Scryber.PDF.Layout
 
             if (anyPositive && totalGrow > 0)
             {
-                // Subtract the reserved space of grow=0 items so grow>0 items share the remainder.
                 double fixedTotal = 0;
                 for (int j = 0; j < count; j++)
                     if (grows[j] == 0) fixedTotal += fixedWidths[j];
@@ -351,12 +489,16 @@ namespace Scryber.PDF.Layout
                 double[] pct = new double[count];
                 for (int j = 0; j < count; j++)
                 {
-                    // Fractions are of effectiveW (container minus gap alleys), same as the
-                    // all-grow=0 path and the original proportional-grow path.
                     pct[j] = grows[j] == 0
                         ? (effectiveW > 0 ? fixedWidths[j] / effectiveW : 0)
                         : (growSum > 0 && effectiveW > 0 ? grows[j] / growSum * remaining / effectiveW : 0);
                 }
+                // Clamp: a fixed-width item wider than the container produces pct > 1.0,
+                // which GetPercentColumnWidths rejects. Scale proportionally to fit.
+                double totalPct = 0;
+                for (int j = 0; j < count; j++) totalPct += pct[j];
+                if (totalPct > 1.0)
+                    for (int j = 0; j < count; j++) pct[j] /= totalPct;
                 return new ColumnWidths(pct);
             }
 
@@ -365,11 +507,13 @@ namespace Scryber.PDF.Layout
 
             double[] fractions = new double[count];
             bool     anySet    = false;
-            i = 0;
+            i      = 0;
+            visIdx = 0;
 
             foreach (var child in container.Content)
             {
                 if (!IsFlexItem(child)) continue;
+                if (visIdx < itemOffset) { visIdx++; continue; }
                 if (i >= count) break;
 
                 if (child is IStyledComponent sc && sc.Style != null)
@@ -386,13 +530,13 @@ namespace Scryber.PDF.Layout
                         anySet = true;
                     }
                 }
+                visIdx++;
                 i++;
             }
 
             if (!anySet) return ColumnWidths.Empty;
 
             // Clamp: if items collectively exceed the container, scale fractions to 1.0 total.
-            // This handles overflow-without-wrap gracefully (items shrink proportionally).
             double totalFrac = 0;
             for (int j = 0; j < count; j++) totalFrac += fractions[j];
             if (totalFrac > 1.0)
