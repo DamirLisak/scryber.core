@@ -2591,7 +2591,7 @@ namespace Scryber.Core.UnitTests.Html
 <html xmlns=""http://www.w3.org/1999/xhtml"">
 <body style=""margin:0; padding:0;"">
   <div style=""display:flex; flex-direction:row; align-items:center; width:600pt; gap:10pt; border:1pt solid #000;"">
-    <div style=""flex-grow:0; width:120pt; border:1pt solid #888; padding:4pt;"">
+    <div style=""flex-grow:0; width:120pt; border:2pt solid #088; padding:4pt;"">
       <img src=""{imgPath}"" style=""width:110pt;"" />
     </div>
     <div style=""flex-grow:1; border:1pt solid #888; padding:8pt; height:80pt;"">

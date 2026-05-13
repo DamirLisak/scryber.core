@@ -79,7 +79,7 @@ namespace Scryber.UnitLayouts
                                      double padding = ItemPad,
                                      Color? borderColor = null)
         {
-            var item = new Panel();
+            var item = new Div();
             item.Style.Border.LineStyle = LineType.Solid;
             item.Style.Border.Width     = ItemBorder;
             item.Style.Border.Color     = borderColor ?? new Color(80, 80, 80);

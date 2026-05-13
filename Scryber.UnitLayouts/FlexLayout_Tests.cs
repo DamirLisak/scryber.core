@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scryber.Components;
@@ -1640,19 +1641,32 @@ namespace Scryber.UnitLayouts
             }
 
             Assert.IsNotNull(layout);
-            var flexBlock = FindFlexBlock(layout.AllPages[0].ContentBlock.Columns[0]);
-            Assert.IsNotNull(flexBlock);
+            var bodyRegion = layout.AllPages[0].ContentBlock.Columns[0];
 
-            // All 3 items in one row (no wrapping).
-            Assert.AreEqual(3, flexBlock.Columns.Length, "flex-wrap:wrap not implemented — items stay in one row");
+            // Find the flex container with 2 wrap-row blocks
+            var ownerCounts = new Dictionary<IComponent, List<PDFLayoutBlock>>();
+            foreach (var item in bodyRegion.Contents)
+            {
+                if (item is PDFLayoutBlock b && b.Owner != null)
+                {
+                    if (!ownerCounts.ContainsKey(b.Owner))
+                        ownerCounts[b.Owner] = new List<PDFLayoutBlock>();
+                    ownerCounts[b.Owner].Add(b);
+                }
+            }
 
-            // Each item shrinks proportionally: 150/(150+150+150) × 300 = 100pt.
-            Assert.AreEqual(100.0, flexBlock.Columns[0].TotalBounds.Width.PointsValue, 1.0,
-                "Overflow item A shrinks to 100pt (150/450 × 300)");
-            Assert.AreEqual(100.0, flexBlock.Columns[1].TotalBounds.Width.PointsValue, 1.0,
-                "Overflow item B shrinks to 100pt");
-            Assert.AreEqual(100.0, flexBlock.Columns[2].TotalBounds.Width.PointsValue, 1.0,
-                "Overflow item C shrinks to 100pt");
+            List<PDFLayoutBlock> wrapRows = null;
+            foreach (var kv in ownerCounts)
+                if (kv.Value.Count >= 2) { wrapRows = kv.Value; break; }
+
+            Assert.IsNotNull(wrapRows, "flex-wrap:wrap should produce 2 wrap-row blocks");
+            Assert.AreEqual(2, wrapRows.Count, "3×150pt in 300pt: row0=(A,B), row1=(C)");
+            Assert.AreEqual(2, wrapRows[0].Columns.Length, "Row 0 should have 2 columns (A+B)");
+            Assert.AreEqual(1, wrapRows[1].Columns.Length, "Row 1 should have 1 column (C)");
+
+            // Row 0: each column should be 150pt wide
+            Assert.AreEqual(150.0, wrapRows[0].Columns[0].TotalBounds.Width.PointsValue, 1.0, "Row 0 col 0 = 150pt");
+            Assert.AreEqual(150.0, wrapRows[0].Columns[1].TotalBounds.Width.PointsValue, 1.0, "Row 0 col 1 = 150pt");
         }
 
         // ======================================================================
