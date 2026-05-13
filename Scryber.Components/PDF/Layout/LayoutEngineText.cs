@@ -824,7 +824,7 @@ namespace Scryber.PDF.Layout
             var block = this.CurrentLine.Region.GetParentBlock();
             while (null != block)
             {
-                if (block.Position.OverflowAction == OverflowAction.Clip
+                if ((block.Position.OverflowAction == OverflowAction.Clip || block.Position.OverflowAction == OverflowAction.Visible)
                     && block.CurrentRegion == block.Columns[block.Columns.Length - 1])
                 {
                     isInClipped = true;

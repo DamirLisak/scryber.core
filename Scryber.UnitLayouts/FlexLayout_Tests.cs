@@ -1087,7 +1087,7 @@ namespace Scryber.UnitLayouts
             var doc   = CreateDoc(out var pg);
             var panel = CreateFlexContainer(pg);
             panel.Style.Flex.AlignItems = FlexAlignMode.Center;
-            AddChild(panel, height: 30, grow: 1, label: "Short",  borderColor: new Color(200,  80,  80));
+            AddChild(panel, height: 30, grow: 1, label: "Short",  borderColor: new Color(200,  80,  80)).OverflowAction = OverflowAction.Visible;
             AddChild(panel, height: 50, grow: 1, label: "Medium", borderColor: new Color( 80, 200,  80));
             AddChild(panel, height: 80, grow: 1, label: "Tall",   borderColor: new Color( 80,  80, 200));
 
