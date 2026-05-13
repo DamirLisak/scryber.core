@@ -2868,13 +2868,19 @@ namespace Scryber.Core.UnitTests.Html
         [TestMethod()]
         public void FlexWrap_MultiRow_OverflowsToNewPage()
         {
-            // Many wrapped rows that collectively overflow onto a second page.
+            // 120 items × 200pt → 3 per row = 40 rows × 80pt = 3200pt.
+            // On an 800pt page: 10 rows per page → 4 pages total.
+            // This test verifies that all 40 rows land correctly and that no row's
+            // columns are split across different pages (the prior bug).
             var rowItems = new System.Text.StringBuilder();
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 120; i++)
                 rowItems.Append($@"<div style=""width:200pt; flex-grow:0; height:80pt; border:1pt solid #888; padding:4pt;"">Item {i + 1}</div>");
 
             var src = $@"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <html xmlns=""http://www.w3.org/1999/xhtml"">
+<head>
+  <style>@page {{ size: 600pt 800pt; margin: 0; }}</style>
+</head>
 <body style=""margin:0; padding:0;"">
   <div style=""display:flex; flex-wrap:wrap; width:600pt; border:1pt solid #000;"">
 {rowItems}
@@ -2894,20 +2900,43 @@ namespace Scryber.Core.UnitTests.Html
             }
 
             Assert.IsNotNull(layout);
-            // 12 items × 200pt, 3 per row = 4 rows × 80pt = 320pt. Fits on one 800pt page.
-            // But we want to verify layout completes without error with wrapping.
-            Assert.IsTrue(layout.AllPages.Count >= 1, "Should produce at least one page");
 
-            // Find all blocks owned by the flex container
-            int totalWrapRowBlocks = 0;
+            // Should span multiple pages.
+            Assert.IsTrue(layout.AllPages.Count >= 2,
+                $"120 items at 80pt/row should span multiple pages, got {layout.AllPages.Count}");
+
+            // Count all 3-column flex row blocks across every page.
+            int totalRowBlocks = 0;
             foreach (var page in layout.AllPages)
+                totalRowBlocks += CountBlocksWithExactColumns(page.ContentBlock.Columns[0], 3);
+
+            // If any row was incorrectly split (old bug: items on individual pages),
+            // fewer 3-column blocks would be found.
+            Assert.AreEqual(40, totalRowBlocks,
+                $"120 items / 3 per row = 40 wrap-row blocks, found {totalRowBlocks}. " +
+                "A count < 40 indicates rows were split across pages.");
+
+            // 40 rows × 80pt on 800pt pages → 10 rows per page → 4 pages.
+            // Allow slight variation for wrappers but cap at 8 to catch the old
+            // one-item-per-page regression (which would produce ~120+ pages).
+            Assert.IsTrue(layout.AllPages.Count <= 8,
+                $"Expected ~4 pages for 40×80pt rows on 800pt pages, got {layout.AllPages.Count}. " +
+                "A very large count indicates rows were split one-item-per-page.");
+        }
+
+        private static int CountBlocksWithExactColumns(PDFLayoutRegion region, int exactCols)
+        {
+            int count = 0;
+            foreach (var item in region.Contents)
             {
-                var region = page.ContentBlock.Columns[0];
-                foreach (var item in region.Contents)
-                    if (item is PDFLayoutBlock b && b.Columns.Length > 1)
-                        totalWrapRowBlocks++;
+                if (item is PDFLayoutBlock b)
+                {
+                    if (b.Columns.Length == exactCols) count++;
+                    foreach (var col in b.Columns)
+                        count += CountBlocksWithExactColumns(col, exactCols);
+                }
             }
-            Assert.IsTrue(totalWrapRowBlocks >= 4, $"12 items at 200pt with 3/row = 4 wrap rows, found {totalWrapRowBlocks}");
+            return count;
         }
 
         // -----------------------------------------------------------------------

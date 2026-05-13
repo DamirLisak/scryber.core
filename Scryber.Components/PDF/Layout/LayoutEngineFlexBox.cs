@@ -111,15 +111,39 @@ namespace Scryber.PDF.Layout
 
         /// <summary>
         /// Lays out each wrap-row as a separate multi-column block.
+        /// Before each row (after the first), checks whether the current page has enough
+        /// vertical space to accommodate a row of the same height as the previous one.
+        /// If not, a page-break is forced before the row is created, ensuring all columns
+        /// in a row land on the same page instead of being split one-per-page.
         /// </summary>
         private void LayoutWrapRows(PDFPositionOptions position, FlexStyle flex,
             FlexAlignMode align, FlexJustify justify, double containerW, Unit colGap)
         {
             var rows = ComputeWrapRows(containerW, colGap.PointsValue);
+            double prevRowH = 0;
+
             foreach (var (rowStart, rowEnd) in rows)
             {
                 int rowItemCount = rowEnd - rowStart;
                 if (rowItemCount <= 0) continue;
+
+                // From the second row onward: if available page height is less than the
+                // height of the previous row, force a move to the next page so that all
+                // columns of this row start together rather than overflowing individually.
+                if (prevRowH > 0.5)
+                {
+                    var currBlock = this.DocumentLayout.CurrentPage.LastOpenBlock();
+                    if (currBlock != null)
+                    {
+                        double availH = currBlock.AvailableBounds.Height.PointsValue;
+                        if (availH < prevRowH - 0.5)
+                        {
+                            var reg = currBlock.CurrentRegion;
+                            bool newPage;
+                            this.MoveToNextRegion(new Unit(prevRowH, PageUnits.Points), ref reg, ref currBlock, out newPage);
+                        }
+                    }
+                }
 
                 _wrapRowStart = rowStart;
                 _wrapRowEnd   = rowEnd;
@@ -132,6 +156,7 @@ namespace Scryber.PDF.Layout
                     ColumnWidths = widths
                 };
 
+                // Re-capture parent after any page move.
                 var parentBlock  = this.DocumentLayout.CurrentPage.LastOpenBlock();
                 var parentRegion = parentBlock?.CurrentRegion;
                 int priorCount   = parentRegion?.Contents.Count ?? 0;
@@ -140,9 +165,10 @@ namespace Scryber.PDF.Layout
                 base.DoLayoutBlockComponent(position, rowCols);
                 _isRowMode = false;
 
+                PDFLayoutBlock flexBlock = null;
                 if (parentRegion != null && parentRegion.Contents.Count > priorCount)
                 {
-                    var flexBlock = parentRegion.Contents[parentRegion.Contents.Count - 1] as PDFLayoutBlock;
+                    flexBlock = parentRegion.Contents[parentRegion.Contents.Count - 1] as PDFLayoutBlock;
                     if (flexBlock != null && flexBlock.Columns.Length > 0)
                     {
                         if (align != FlexAlignMode.Stretch && align != FlexAlignMode.FlexStart)
@@ -151,6 +177,10 @@ namespace Scryber.PDF.Layout
                             ApplyJustifyContent(flexBlock, justify);
                     }
                 }
+
+                // Track the row height so the next iteration can pre-check page space.
+                if (flexBlock != null)
+                    prevRowH = flexBlock.TotalBounds.Height.PointsValue;
             }
             _wrapRowStart = -1;
             _wrapRowEnd   = -1;
