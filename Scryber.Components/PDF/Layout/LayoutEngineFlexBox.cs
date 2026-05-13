@@ -493,6 +493,12 @@ namespace Scryber.PDF.Layout
                         ? (effectiveW > 0 ? fixedWidths[j] / effectiveW : 0)
                         : (growSum > 0 && effectiveW > 0 ? grows[j] / growSum * remaining / effectiveW : 0);
                 }
+                // Clamp: a fixed-width item wider than the container produces pct > 1.0,
+                // which GetPercentColumnWidths rejects. Scale proportionally to fit.
+                double totalPct = 0;
+                for (int j = 0; j < count; j++) totalPct += pct[j];
+                if (totalPct > 1.0)
+                    for (int j = 0; j < count; j++) pct[j] /= totalPct;
                 return new ColumnWidths(pct);
             }
 
