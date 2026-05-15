@@ -1,2 +1,5 @@
 ﻿<Project>
+  <PropertyGroup>
+    <UseScryberProjRef>True</UseScryberProjRef>
+  </PropertyGroup>
 </Project>
